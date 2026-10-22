@@ -375,6 +375,12 @@ async function printDns(domainId) {
     console.log(`  ${r.name.padEnd(w)}  ${r.type.padEnd(4)}  ${value}`);
   }
   console.log('');
+  console.log('  Cloudflare users: set these A records to "DNS only" (grey cloud), not "Proxied".');
+  console.log('  The proxy breaks SMTP/IMAP on the mail host and blocks the HTTPS certificate (error 525).');
+  console.log('  If one of these hostnames is already used by another site, pick others with');
+  console.log('  MAIL_HOSTNAME / SEND_HOST / API_HOST in /opt/5050-mail/.env, then run install.sh --upgrade.');
+  console.log('  Keep a single MX for the domain: other MX records at the same priority split your inbound mail.');
+  console.log('');
   console.log(`  Reverse DNS (PTR): ask your VPS provider to set the PTR of ${env.PUBLIC_IPV4 || 'the server IP'} to ${HOSTNAME}.`);
   console.log('  Without a matching PTR many receivers (Gmail, Outlook) spam-folder or reject direct mail.');
   console.log('');

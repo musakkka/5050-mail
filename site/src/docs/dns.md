@@ -118,3 +118,11 @@ dig v1-ed25519-20261022._domainkey.example.com TXT +short
 ```
 
 The quickest end-to-end check is to send a message to a Gmail address and choose **Show original**: SPF, DKIM and DMARC should each say `PASS`. More in [Troubleshooting](/docs/troubleshooting/#checking-dkim).
+
+## Cloudflare: use "DNS only"
+
+If your DNS is on Cloudflare and you add the records by hand, set the `A` records for the mail, send and API hosts to **DNS only** (grey cloud). The orange-cloud proxy only carries web traffic, so it breaks SMTP and IMAP on the mail host, and it stops Caddy from getting its HTTPS certificate (Cloudflare shows error 525). When you give the installer a Cloudflare token it creates them as DNS only for you.
+
+Already using `api.<domain>` or `send.<domain>` for something else? Set `API_HOST` / `SEND_HOST` (and `MAIL_HOSTNAME`) in `/opt/5050-mail/.env` and run `sudo /opt/5050-mail/install.sh --upgrade`.
+
+Keep one `MX` record for the domain. A second MX at the same priority (for example an old provider's) sends part of your inbound mail there.
