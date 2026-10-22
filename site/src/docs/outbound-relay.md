@@ -73,3 +73,7 @@ The relay's servers send as your domain, so your SPF record must allow them. The
 | Vultr, OVH, Contabo | Open or opened on request. |
 
 With an unblocked IP, mail leaves from your own address and builds its own reputation, but you also need reverse DNS (see [Requirements](/docs/requirements/)).
+
+## Delivery tracking
+
+Whichever relay you choose (or direct delivery on port 25), 5050 Send still reports each email as delivered, bounced, delayed or failed: the mail server posts every outcome back to Send, so statuses, metrics, webhooks and the suppression list work with any relay.

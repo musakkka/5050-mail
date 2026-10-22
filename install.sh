@@ -548,6 +548,7 @@ env_default WEBMAIL_DB_PASSWORD "$(rand 40)"
 env_default STALWART_ADMIN "recovery:$(rand 32)"
 env_default WEBMAIL_SESSION_SECRET "$(rand 64)"
 env_default SEND_SESSION_SECRET "$(rand 64)"
+env_default STALWART_EVENTS_SECRET "$(rand 64)"
 env_default WEB_CONCURRENCY "auto"
 
 [ -n "$ARG_SEND_TRANSPORT" ] && env_set SEND_TRANSPORT "$ARG_SEND_TRANSPORT"
