@@ -23,6 +23,8 @@
  *   ACME_DIRECTORY          default Let's Encrypt production
  *   CLOUDFLARE_API_TOKEN    optional: DNS-01 certificates + automatic DNS records via Stalwart's Cloudflare DnsServer
  *   RELAY_HOST/RELAY_PORT/RELAY_USERNAME/RELAY_PASSWORD   optional outbound smarthost (default: direct delivery on 25)
+ *   STALWART_EVENTS_SECRET  shared secret for the delivery webhook to 5050 Send (empty: webhook not configured)
+ *   SEND_EVENTS_URL         where Stalwart POSTs delivery events (default http://send-web:3000/internal/stalwart-events)
  *   SEND_RELAY_PORT         internal SMTP port 5050 Send submits to (default 2525, never published)
  */
 
@@ -41,6 +43,8 @@ const CF = !!env.CLOUDFLARE_API_TOKEN;
 const RELAY_HOST = env.RELAY_HOST ?? '';
 const RELAY_PORT = Number(env.RELAY_PORT || 587);
 const SEND_PORT = Number(env.SEND_RELAY_PORT || 2525);
+const EVENTS_SECRET = env.STALWART_EVENTS_SECRET ?? '';
+const EVENTS_URL = env.SEND_EVENTS_URL || 'http://send-web:3000/internal/stalwart-events';
 const args = new Set(process.argv.slice(2));
 
 const die = (m) => {
@@ -96,6 +100,42 @@ async function waitForStalwart() {
     await new Promise((r) => setTimeout(r, 2000));
   }
   die(`Stalwart did not become healthy at ${STALWART}`);
+}
+
+
+/**
+ * Delivery feedback for 5050 Send: Stalwart POSTs the per-recipient outcome events (delivered,
+ * bounced, deferred) to Send's internal endpoint, which turns them into email.delivered / .bounced /
+ * .delivery_delayed. Works the same for direct delivery and for a relay. Authenticated with a Bearer
+ * secret; the URL is on the internal compose network only.
+ */
+async function deliveryWebhook() {
+  const existing = (await getAll('WebHook')).filter((w) => /\/internal\/stalwart-events$/.test(w.url ?? ''));
+  if (!EVENTS_SECRET) {
+    if (existing.length) await set('WebHook', { update: Object.fromEntries(existing.map((w) => [w.id, { enable: false }])) });
+    log('STALWART_EVENTS_SECRET is empty: delivery webhook to 5050 Send not configured (emails stay at "sent")');
+    return;
+  }
+  const hook = {
+    url: EVENTS_URL,
+    enable: true,
+    httpAuth: { '@type': 'Bearer', bearerToken: { '@type': 'Value', secret: EVENTS_SECRET } },
+    eventsPolicy: 'include',
+    events: Object.fromEntries(
+      ['delivery.dsn-success', 'delivery.dsn-perm-fail', 'delivery.dsn-temp-fail', 'queue.rescheduled', 'queue.blob-not-found'].map((e) => [e, true]),
+    ),
+    // Retry for an hour if Send is down (default 5 minutes), batch up to a second of events.
+    discardAfter: 3600000,
+    timeout: 30000,
+    throttle: 1000,
+  };
+  if (existing.length) {
+    await set('WebHook', { update: { [existing[0].id]: hook } });
+    if (existing.length > 1) await set('WebHook', { destroy: existing.slice(1).map((w) => w.id) });
+  } else {
+    await set('WebHook', { create: { n: hook } });
+    log('created delivery webhook to 5050 Send');
+  }
 }
 
 // ---------------------------------------------------------------- reconcile
@@ -313,6 +353,7 @@ async function reconcile() {
   } else {
     log(`ADMIN_EMAIL ${ADMIN_EMAIL} is not on ${DOMAIN}; skipping admin mailbox creation`);
   }
+  await deliveryWebhook();
   await set('Action', { create: { n: { '@type': 'ReloadSettings' } } }).catch((e) => log(`reload request failed (${e.message}); restart Stalwart to apply`));
   return domainId;
 }

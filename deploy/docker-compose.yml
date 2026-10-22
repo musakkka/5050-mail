@@ -27,6 +27,8 @@ x-send-env: &send-env
   PG_POOL_MAX: ${SEND_PG_POOL_MAX:-5}
   STALWART_URL: http://stalwart:8080
   SESSION_SECRET: ${SEND_SESSION_SECRET:?}
+  # Delivery webhook from Stalwart (empty: delivery tracking off, emails stay at "sent").
+  STALWART_EVENTS_SECRET: ${STALWART_EVENTS_SECRET:-}
   TRANSPORT: ${SEND_TRANSPORT:-smtp}
   SMTP_RELAY_URL: smtp://stalwart:2525
   DOMAIN_RECORDS: ${SEND_DOMAIN_RECORDS:-local}
@@ -259,6 +261,7 @@ services:
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
       CLOUDFLARE_ZONE: ${CLOUDFLARE_ZONE:-}
       RELAY_HOST: ${RELAY_HOST:-}
+      STALWART_EVENTS_SECRET: ${STALWART_EVENTS_SECRET:-}
       RELAY_PORT: ${RELAY_PORT:-587}
       RELAY_USERNAME: ${RELAY_USERNAME:-}
       RELAY_PASSWORD: ${RELAY_PASSWORD:-}
