@@ -58,7 +58,7 @@ Many cloud providers block **outbound** connections to port 25 to stop spam from
 | AWS EC2 | Restricted by default; you can ask AWS to remove the restriction for an instance. |
 | DigitalOcean | Blocked on new accounts; support may lift it later. |
 
-The installer tests outbound port 25 (by connecting to Gmail's MX) and warns you if it is blocked. You then have two choices.
+The installer tests outbound port 25 by connecting to three large mail providers with short timeouts. It tells a blocked port apart from a server without network, recognises your cloud provider (from DMI data or the instance-metadata service) and prints what to do. You then have two choices.
 
 ### Ask your provider to unblock it
 
@@ -66,22 +66,17 @@ Best for deliverability over time: your own IP builds its own reputation. Set PT
 
 ### Send through a relay
 
-Stalwart can hand every outgoing message to an SMTP relay (a "smarthost"). Inbound mail still arrives directly on port 25; only outbound changes. Any provider that accepts authenticated SMTP on port 587 or 465 works, for example Amazon SES, Postmark, Mailgun, SMTP2GO, or Cloudflare Email Service.
-
-Pass the relay to the installer (on a new install, or re-run it on an existing one):
+Any SMTP service that accepts authenticated mail on port 465 or 587 works: Cloudflare Email Service, Resend, Amazon SES, Postmark, Mailgun, Brevo, SMTP2GO or your own. Inbound mail still arrives directly on port 25.
 
 ```sh
-sudo /opt/5050-mail/install.sh \
-  --relay-host email-smtp.us-east-1.amazonaws.com --relay-port 587 \
-  --relay-user YOUR_SMTP_USERNAME --relay-password 'YOUR_SMTP_PASSWORD'
+sudo /opt/5050-mail/install.sh --relay            # menu, tests the login, flushes the queue
+sudo /opt/5050-mail/install.sh --relay resend --relay-password "$RESEND_API_KEY" --yes
 ```
 
-This writes `RELAY_HOST`, `RELAY_PORT`, `RELAY_USERNAME` and `RELAY_PASSWORD` into `/opt/5050-mail/.env`. Port `465` uses implicit TLS, `587` STARTTLS. Mail for your own domains is still delivered locally. To go back to direct delivery, empty `RELAY_HOST` in `.env` and re-run the installer.
-
-With Cloudflare Email Service as the relay, also set `CLOUDFLARE_EMAIL_SENDING=1` in `.env`, so one-click domain setup also onboards new domains for sending.
+See [Outbound relay](/docs/outbound-relay/) for every provider's settings, validation, SPF and the Cloudflare Email Service setup.
 
 > [!IMPORTANT]
-> Most relays only send for domains you have verified with them, and they sign with their own DKIM unless you set up custom DKIM there. Add the relay's SPF `include:` to your SPF record (see [DNS](/docs/dns/#spf)), or your mail fails SPF.
+> Most relays only send for domains you have verified with them. Add the relay's SPF `include:` to your single SPF record (see [DNS](/docs/dns/#spf)); with Cloudflare DNS the installer merges it for you.
 
 ## A domain
 

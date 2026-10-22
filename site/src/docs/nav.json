@@ -1,5 +1,5 @@
 [
-  { "group": "Start here", "pages": ["index", "quickstart", "requirements", "dns"] },
+  { "group": "Start here", "pages": ["index", "quickstart", "requirements", "outbound-relay", "dns"] },
   { "group": "5050 Mail", "pages": ["admin-console", "webmail"] },
   { "group": "5050 Send", "pages": ["send-api", "smtp-relay", "webhooks", "send-dashboard"] },
   { "group": "Operate", "pages": ["configuration", "scaling", "backups-upgrades", "security", "troubleshooting", "faq"] }

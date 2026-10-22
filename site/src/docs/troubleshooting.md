@@ -49,7 +49,14 @@ For Gmail, register your domain in Google Postmaster Tools to see your domain's 
 
 ## Port 25 is blocked
 
-See [Requirements: port 25](/docs/requirements/#port-25). Receiving is not affected; only delivery to other servers. Set `RELAY_HOST` and friends in `.env` and re-run the installer.
+Symptom: mail you send stays in the queue (`dc logs stalwart | grep -i queue`), while receiving works. The installer detects this and offers a relay; on an existing server run:
+
+```sh
+sudo /opt/5050-mail/install.sh --relay          # menu; tests the login; retries the stuck queue
+sudo /opt/5050-mail/install.sh --relay-test     # re-test the saved relay login
+```
+
+See [Outbound relay](/docs/outbound-relay/) and [Requirements: port 25](/docs/requirements/#port-25). If `--relay-test` is refused, the server's reply is printed (for example `535 Authentication credentials invalid`: wrong user or key; no reply: the relay's port is blocked from this server, try 587 or 2525). If the queue API cannot retry, Stalwart is restarted and retries on its own schedule.
 
 ## Checking DKIM
 

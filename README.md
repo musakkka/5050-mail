@@ -50,6 +50,25 @@ Re-running it is safe. Once your DNS records are in place:
 | IMAP / SMTP | `mail.example.com`, 993 / 465 / 587 |
 | Send SMTP relay | `mail.example.com`, 2465 (TLS) / 2587 (STARTTLS), user `resend`, password = API key |
 
+Outbound port 25 is blocked on most clouds. The installer detects it, names your provider and offers a relay (it tests the login before saving, and flushes the queue afterwards):
+
+| Relay | `--relay` | Server |
+|---|---|---|
+| Cloudflare Email Service | `cloudflare` | `smtp.mx.cloudflare.net:465`, user `api_token`, an API token with Email Sending: Edit |
+| Resend | `resend` | `smtp.resend.com:465`, user `resend`, API key |
+| Amazon SES | `ses` (`--relay-region`) | `email-smtp.<region>.amazonaws.com:587` |
+| Postmark | `postmark` | `smtp.postmarkapp.com:587` |
+| Mailgun | `mailgun` | `smtp.mailgun.org:587` |
+| Brevo | `brevo` | `smtp-relay.brevo.com:587` |
+| SMTP2GO | `smtp2go` | `mail.smtp2go.com:2525` |
+
+```sh
+sudo /opt/5050-mail/install.sh --relay                # menu, on an existing install
+sudo /opt/5050-mail/install.sh --relay resend --relay-password "$KEY" --yes
+sudo /opt/5050-mail/install.sh --relay-host smtp.example.com --relay-port 587 --relay-user U --relay-password P --yes
+sudo /opt/5050-mail/install.sh --relay-test           # re-validate the saved relay login
+```
+
 Other commands:
 
 ```sh
