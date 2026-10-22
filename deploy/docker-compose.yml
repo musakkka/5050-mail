@@ -240,6 +240,7 @@ services:
     networks: [internal]
     volumes:
       - ../server/bootstrap.mjs:/bootstrap.mjs:ro
+      - ../server/relay.mjs:/relay.mjs:ro
     entrypoint: ["node", "/bootstrap.mjs"]
     environment:
       STALWART_URL: http://stalwart:8080
@@ -261,5 +262,6 @@ services:
       RELAY_PORT: ${RELAY_PORT:-587}
       RELAY_USERNAME: ${RELAY_USERNAME:-}
       RELAY_PASSWORD: ${RELAY_PASSWORD:-}
+      RELAY_SPF_INCLUDE: ${RELAY_SPF_INCLUDE:-}
     depends_on:
       stalwart: { condition: service_healthy }
