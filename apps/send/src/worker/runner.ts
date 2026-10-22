@@ -7,6 +7,7 @@ import { processSendEmail, RetryableError } from '../services/delivery.js';
 import { deliverDue, runReplayJob } from '../services/webhooks.js';
 import { runVerification, VERIFY_INTERVAL_MS } from '../services/domains.js';
 import { pollAnalytics } from '../services/analytics.js';
+import { purgePendingStalwartEvents } from '../services/stalwartEvents.js';
 import { purgeExpiredSessions } from '../internal/sessions.js';
 
 export type JobHandler = (ctx: AppContext, job: Job) => Promise<void | { rescheduleAt: Date }>;
@@ -87,6 +88,7 @@ export async function retention(ctx: AppContext): Promise<void> {
   await ctx.sql`delete from idempotency_keys where created_at < now() - interval '24 hours'`;
   await ctx.sql`delete from webhook_events where created_at < now() - ${d}::interval and status in ('success', 'failed')`;
   await purgeExpiredSessions(ctx);
+  await purgePendingStalwartEvents(ctx);
 }
 
 export interface WorkerHandle {

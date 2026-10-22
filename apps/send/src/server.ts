@@ -8,6 +8,7 @@ import { Hono } from 'hono';
 import type { AppContext } from './context.js';
 import { createPublicApi, type InternalBindings, type PublicApi } from './api/app.js';
 import { createDashboardApp } from './internal/app.js';
+import { createStalwartEventsApp, STALWART_EVENTS_PATH } from './internal/stalwartEvents.js';
 
 export interface ServerApp {
   app: Hono;
@@ -18,6 +19,7 @@ export function createServerApp(ctx: AppContext): ServerApp {
   const api = createPublicApi(ctx);
   const dashboard = createDashboardApp(ctx, api);
   const root = new Hono();
+  const stalwartEvents = createStalwartEventsApp(ctx);
 
   root.get('/health', async (c) => {
     try {
@@ -41,6 +43,11 @@ export function createServerApp(ctx: AppContext): ServerApp {
     const hostWithPort = (c.req.header('host') ?? '').toLowerCase();
     const path = c.req.path;
     const env = c.env as InternalBindings;
+    // Mail-server webhook: only on the internal compose network (Host is neither public name), and still needs the shared secret.
+    if (path === STALWART_EVENTS_PATH) {
+      const isPublic = host === ctx.config.apiHost || host === ctx.config.dashboardHost || hostWithPort === ctx.config.apiHost || hostWithPort === ctx.config.dashboardHost;
+      if (!isPublic) return forward(stalwartEvents, c.req.raw, undefined);
+    }
     const isApiHost = host === ctx.config.apiHost || hostWithPort === ctx.config.apiHost;
     const isDashHost = host === ctx.config.dashboardHost || hostWithPort === ctx.config.dashboardHost;
     const surface = isApiHost ? 'api' : isDashHost ? 'dashboard' : path === '/v' || path.startsWith('/v/') ? 'api-prefixed' : ctx.config.defaultSurface;

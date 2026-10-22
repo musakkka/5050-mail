@@ -6,6 +6,7 @@ import { signToken } from '../lib/crypto.js';
 import { TransportError } from '../transport/index.js';
 import { applyTracking, buildMime, type MimeAttachment } from './mime.js';
 import { recordEvent, type EmailRow } from './emailEvents.js';
+import { replayPendingStalwartEvents } from './stalwartEvents.js';
 import { CLOUDFLARE_MAX_BYTES, TEST_ADDRESS_RE } from './emails.js';
 import { renderVars } from './render.js';
 
@@ -80,6 +81,7 @@ export async function processSendEmail(ctx: AppContext, emailId: string, attempt
   const testRecipients = recipients.filter((r) => TEST_ADDRESS_RE.test(r));
   const realRecipients = recipients.filter((r) => !TEST_ADDRESS_RE.test(r));
   let providerMessageId: string | undefined;
+  let queueId: string | undefined;
   let delivered: string[] = [];
   let bounced: string[] = [];
   let queued: string[] = [];
@@ -166,6 +168,7 @@ export async function processSendEmail(ctx: AppContext, emailId: string, attempt
     try {
       const r = await ctx.transport.send({ emailId, teamId: email.team_id as string, from: envelopeFrom, recipients: realRecipients, raw });
       providerMessageId = r.providerMessageId;
+      queueId = r.queueId;
       delivered = r.delivered;
       bounced = r.permanentBounces;
       queued = r.queued;
@@ -179,7 +182,7 @@ export async function processSendEmail(ctx: AppContext, emailId: string, attempt
       ctx.log('delivery', 'transport failed', { emailId, error: (e as Error).message });
       return fail(e instanceof TransportError && e.code === 'too_big' ? 'message_too_large' : 'transport_error');
     }
-    await ctx.sql`update emails set provider_message_id = ${providerMessageId ?? null}, sent_at = now() where id = ${emailId}`;
+    await ctx.sql`update emails set provider_message_id = ${providerMessageId ?? null}, smtp_queue_id = ${queueId ?? null}, sent_at = now() where id = ${emailId}`;
   } else {
     await ctx.sql`update emails set sent_at = now() where id = ${emailId}`;
   }
@@ -204,5 +207,7 @@ export async function processSendEmail(ctx: AppContext, emailId: string, attempt
   }
   const complained = testRecipients.filter((r) => /^complained/i.test(r));
   if (complained.length) await recordEvent(ctx, ev, 'complained', { recipients: complained });
-  void queued; // final outcome for queued recipients comes from the analytics poller
+  // Final outcomes for queued recipients come from the mail server's webhook (or the Cloudflare analytics poller).
+  // Any that arrived before the queue id was stored were parked: apply them now, after `sent`.
+  if (queueId && queued.length) await replayPendingStalwartEvents(ctx, queueId);
 }

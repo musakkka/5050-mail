@@ -64,9 +64,12 @@ export async function recordEvent(ctx: AppContext, e: EmailRow, type: EmailEvent
     returning id`;
   if (!ins.length) return false;
   if (type !== 'unsubscribed') {
+    // `sent` is recorded after the hand-off returns; the mail server can report the outcome first.
+    // It must not move an email back from delivered/bounced/delayed.
     await ctx.sql`
       update emails set last_event = ${type}, last_event_at = ${at}, updated_at = now()
-      where id = ${e.id} and last_event_at <= ${at}`;
+      where id = ${e.id} and last_event_at <= ${at}
+        and (${type} <> 'sent' or last_event in ('queued', 'scheduled', 'suppressed'))`;
   }
   if (opts.webhook !== false && type !== 'queued' && type !== 'canceled' && type !== 'unsubscribed') {
     await emit(ctx, e.team_id, `email.${type}` as WebhookEventType, { ...baseEventData(e, opts.recipients), ...(opts.extra ?? {}) });

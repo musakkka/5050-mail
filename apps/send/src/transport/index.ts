@@ -13,6 +13,8 @@ export interface OutboundMessage {
 
 export interface SendResult {
   providerMessageId?: string;
+  /** The mail server's queue id for this submission (decimal string), when it reports one. */
+  queueId?: string;
   delivered: string[];
   queued: string[];
   permanentBounces: string[];
@@ -66,9 +68,12 @@ export class CloudflareTransport implements Transport {
 /** In-memory transport for tests and local dev. Never leaves the process. */
 export class FakeTransport implements Transport {
   readonly name = 'fake';
-  sent: (OutboundMessage & { at: Date })[] = [];
+  sent: (OutboundMessage & { at: Date; queueId: string })[] = [];
+  private seq = 0;
   /** Recipients to report as permanent bounces. */
   bounce = new Set<string>();
+  /** Behave like the SMTP transport: accept everything as queued and leave the outcome to the mail server's events. */
+  queueOnly = false;
   /** Throw this on the next send. */
   failNext: TransportError | null = null;
 
@@ -78,13 +83,15 @@ export class FakeTransport implements Transport {
       this.failNext = null;
       throw e;
     }
-    this.sent.push({ ...msg, at: new Date() });
+    const queueId = String(336447000000000000n + BigInt(++this.seq));
+    this.sent.push({ ...msg, at: new Date(), queueId });
     const bounced = msg.recipients.filter((r) => this.bounce.has(r.toLowerCase()));
     return {
       providerMessageId: `<fake-${msg.emailId}@fake.transport>`,
-      delivered: msg.recipients.filter((r) => !bounced.includes(r)),
-      queued: [],
-      permanentBounces: bounced,
+      queueId,
+      delivered: this.queueOnly ? [] : msg.recipients.filter((r) => !bounced.includes(r)),
+      queued: this.queueOnly ? msg.recipients : [],
+      permanentBounces: this.queueOnly ? [] : bounced,
       suppressed: [],
     };
   }
@@ -128,6 +135,7 @@ export class SmtpTransport implements Transport {
       const dkim = (await this.dkimFor?.(msg.from)) ?? undefined;
       const info = (await this.transporter.sendMail({ envelope: { from: msg.from, to: msg.recipients }, raw: msg.raw, ...(dkim ? { dkim } : {}) })) as {
         messageId?: string;
+        response?: string;
         accepted?: Addr[];
         rejected?: Addr[];
         rejectedErrors?: { responseCode?: number; recipient?: string }[];
@@ -137,7 +145,7 @@ export class SmtpTransport implements Transport {
       const accepted = (info.accepted ?? []).map(addr);
       const perm = (info.rejectedErrors ?? []).filter((e) => Number(e.responseCode) >= 500).map((e) => e.recipient ?? '');
       if (!accepted.length && rejected.length && perm.length < rejected.length) throw new TransportError('Mail server temporarily rejected all recipients', true, 'smtp_tempfail');
-      return { providerMessageId: info.messageId, delivered: [], queued: accepted, permanentBounces: rejected.filter((r) => perm.includes(r) || !perm.length), suppressed: [] };
+      return { providerMessageId: info.messageId, queueId: parseQueueId(info.response), delivered: [], queued: accepted, permanentBounces: rejected.filter((r) => perm.includes(r) || !perm.length), suppressed: [] };
     } catch (e) {
       if (e instanceof TransportError) throw e;
       const code = Number((e as { responseCode?: number }).responseCode);
@@ -145,4 +153,13 @@ export class SmtpTransport implements Transport {
       throw new TransportError(`SMTP: ${(e as Error).message}`, !permanent, code ? String(code) : 'smtp_error');
     }
   }
+}
+
+/**
+ * Stalwart answers a submission with "250 2.0.0 Message queued with id 4ab4d05aa400e00" (the queue id
+ * in hex); its logs and webhooks carry the same number in decimal. Returns the decimal string.
+ */
+export function parseQueueId(response: string | undefined): string | undefined {
+  const m = /queued (?:for delivery )?with id ([0-9a-f]{1,16})\b/i.exec(response ?? '');
+  return m ? BigInt('0x' + m[1]).toString() : undefined;
 }

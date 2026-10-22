@@ -5,6 +5,8 @@ export interface Config {
   port: number;
   databaseUrl: string;
   stalwartUrl: string;
+  /** Shared secret Stalwart's webhook presents (Bearer) on POST /internal/stalwart-events. Empty: endpoint disabled. */
+  stalwartEventsSecret: string;
   /** Host header that selects the public (Resend-compatible) API. */
   apiHost: string;
   /** Host header that selects the dashboard + /api/internal. */
@@ -96,6 +98,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     port: Number(env.PORT ?? 3000),
     databaseUrl: env.DATABASE_URL ?? 'postgres://send:sendpw@localhost:55432/send',
     stalwartUrl: stripSlash(env.STALWART_URL ?? 'http://localhost:18090'),
+    stalwartEventsSecret: env.STALWART_EVENTS_SECRET ?? '',
     apiHost,
     dashboardHost,
     defaultSurface: (env.DEFAULT_SURFACE ?? (prod ? 'none' : 'dashboard')) as Config['defaultSurface'],
