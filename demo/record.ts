@@ -122,8 +122,7 @@ if (want('mail')) {
   await rec.wait(0.1);
   rec.log('cutStart'); // skip the thread's loading frame
   await page.getByRole('heading', { name: 'Launch plan for the new pricing page' }).waitFor();
-  await page.getByText('pricing-launch-plan.pdf').last().waitFor();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(900);
   rec.log('cutEnd');
   rec.cam(1.32, { x: 660, y: 330 }, 1.0);
   await rec.wait(2.0);
@@ -262,7 +261,7 @@ if (want('send')) {
   await page.locator('#email').fill(USER.email);
   await page.locator('#password').fill(USER.password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL(/\/emails/);
+  await page.waitForURL(/\/emails/, { timeout: 90_000 });
   // prefetch the metrics (cached by the dashboard) and settle on the Emails page
   await page.goto(`${SEND}/metrics`);
   await page.locator('.recharts-surface').first().waitFor({ timeout: 60_000 });
@@ -284,8 +283,7 @@ if (want('send')) {
   await kd.waitFor();
   await rec.wait(0.3);
   const kdb = await kd.boundingBox();
-  rec.cam(1.35, { x: kdb!.x + kdb!.width / 2, y: kdb!.y + kdb!.height / 2 }, 0.9);
-  await rec.click(kd.locator('#name'));
+    await rec.click(kd.locator('#name'));
   await rec.type('Website', 12);
   await rec.wait(0.2);
   await rec.click(kd.getByRole('button', { name: /^Add/ }));
@@ -307,8 +305,7 @@ if (want('send')) {
   await wd.waitFor();
   await rec.wait(0.3);
   const wdb = await wd.boundingBox();
-  rec.cam(1.35, { x: wdb!.x + wdb!.width / 2, y: wdb!.y + wdb!.height / 2 }, 0.9);
-  await rec.click(wd.locator('#endpoint'));
+    await rec.click(wd.locator('#endpoint'));
   await rec.type('https://api.acme.test/webhooks/email', 30);
   await rec.click(wd.locator('#events'));
   await rec.wait(0.4);
@@ -319,7 +316,12 @@ if (want('send')) {
   await page.keyboard.press('Escape');
   await rec.wait(0.4);
   await rec.click(wd.getByRole('button', { name: /^Add/ }));
+  await rec.wait(0.3);
+  rec.log('cutStart'); // creating the webhook can take a moment locally
   await wd.waitFor({ state: 'hidden' });
+  await page.getByText('No deliveries yet').first().waitFor({ timeout: 8_000 }).catch(() => undefined);
+  await page.waitForTimeout(300);
+  rec.log('cutEnd');
   rec.cam(1, undefined, 0.8);
   await rec.wait(0.7);
 
