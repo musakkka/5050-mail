@@ -1,0 +1,16 @@
+20:55:21	bench-send	57.42%	65.05MiB / 6GiB
+20:55:21	bench-pg	18.36%	82.36MiB / 2GiB
+20:55:25	bench-send	64.66%	66.41MiB / 6GiB
+20:55:25	bench-pg	23.29%	82.95MiB / 2GiB
+20:55:28	bench-send	73.05%	68.42MiB / 6GiB
+20:55:28	bench-pg	24.98%	82.96MiB / 2GiB
+20:55:32	bench-send	44.80%	77.08MiB / 6GiB
+20:55:32	bench-pg	26.20%	82.99MiB / 2GiB
+20:55:35	bench-send	47.34%	85.2MiB / 6GiB
+20:55:35	bench-pg	29.63%	83.12MiB / 2GiB
+20:55:39	bench-send	51.42%	86.95MiB / 6GiB
+20:55:39	bench-pg	33.47%	83.05MiB / 2GiB
+20:55:43	bench-send	47.37%	90.82MiB / 6GiB
+20:55:43	bench-pg	29.44%	83.78MiB / 2GiB
+20:55:46	bench-send	42.60%	93.09MiB / 6GiB
+20:55:46	bench-pg	34.41%	83.57MiB / 2GiB

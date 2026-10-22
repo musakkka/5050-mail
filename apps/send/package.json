@@ -1,0 +1,42 @@
+{
+  "name": "5050-send",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "5050 Send: a Resend-compatible email API backed by Cloudflare Email Sending",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "dev:worker": "tsx watch src/worker.ts",
+    "dev:smtp": "tsx watch src/smtp.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "worker": "node dist/worker.js",
+    "smtp": "node dist/smtp.js",
+    "migrate": "tsx src/migrate.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "docs:examples": "DOCS_EXAMPLES=1 vitest run test/docs-examples.test.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "acme-client": "^5.4.0",
+    "chrono-node": "^2.10.3",
+    "hono": "^4.13.13",
+    "nodemailer": "^10.2.0",
+    "postal-mime": "^4.1.3",
+    "postgres": "^3.4.9",
+    "smtp-server": "^3.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/nodemailer": "^8.0.2",
+    "@types/smtp-server": "^3.5.13",
+    "resend": "6.34.1",
+    "svix": "^2.8.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

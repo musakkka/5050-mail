@@ -1,0 +1,18 @@
+[20:58:47] start postgres (cpuset 0-3, mem 2g)
+[20:58:57] app: web=4 (seed)
+{"scenario":"single","vus":16,"duration":"5s","batch":1,"requests":189,"rps":37.45718939787905,"emails_per_sec":37.45718939787905,"failed_rate":0,"p50_ms":299.709,"p95_ms":1468.1678364,"p99_ms":1720.3308311199999,"max_ms":1787.623195,"avg_ms":423.2230514444445}
+[20:59:19] POST /emails, 64 VUs
+{"scenario":"single","vus":64,"duration":"20s","batch":1,"requests":2137,"rps":104.87362952529149,"emails_per_sec":104.87362952529149,"failed_rate":0,"p50_ms":524.612334,"p95_ms":1210.8140256,"p99_ms":1720.9598969999997,"max_ms":2209.718251,"avg_ms":606.2001578025271}
+[20:59:43] POST /emails/batch x100, 8 VUs
+{"scenario":"batch","vus":8,"duration":"20s","batch":100,"requests":56,"rps":2.603717740637756,"emails_per_sec":260.3717740637756,"failed_rate":0,"p50_ms":3089.961647,"p95_ms":3958.296408,"p99_ms":4401.0680126,"max_ms":4928.212877,"avg_ms":3058.0149376428567}
+[21:00:06] GET /emails/{id}, 64 VUs
+{"scenario":"get","vus":64,"duration":"20s","batch":1,"requests":5104,"rps":247.95466856411127,"emails_per_sec":0,"failed_rate":0,"p50_ms":177.46975,"p95_ms":727.8266695999994,"p99_ms":1064.0292977499998,"max_ms":1408.716876,"avg_ms":251.55612425333067}
+[21:00:31] queued send_email jobs: 7927; emails rows: 7927
+[21:00:33] worker drain: worker=4, no webhooks
+{"name": "worker", "emails_sent": 1507, "emails_per_sec": 50.2, "webhook_deliveries": 0, "webhooks_per_sec": 0.0, "seconds": 30.0, "backlog_end": 6419}
+[21:01:32] worker drain + webhook fan-out to 3 endpoints
+{"name": "worker_webhooks", "emails_sent": 157, "emails_per_sec": 5.2, "webhook_deliveries": 328, "webhooks_per_sec": 10.9, "seconds": 30.0, "backlog_end": 6210}
+[21:02:51] smtp relay: smtp=4
+{"conc":16,"total":800,"ok":800,"failed":0,"seconds":61.2,"msgs_per_sec":13.1,"p50_ms":849.4970840000024,"p95_ms":3226.1744180000023,"p99_ms":3815.418043999998,"errors":[]}
+{"conc":64,"total":3200,"ok":3200,"failed":0,"seconds":234.04,"msgs_per_sec":13.7,"p50_ms":1613.5353339999856,"p95_ms":20942.984967999997,"p99_ms":45699.26027099999,"errors":[]}
+[21:09:51] done

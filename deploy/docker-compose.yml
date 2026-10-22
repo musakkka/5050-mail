@@ -1,0 +1,265 @@
+# 5050 Mail: the whole stack on one VM.
+#
+#   docker compose --env-file ../.env -f docker-compose.yml up -d     (install.sh does this)
+#
+# Public ports: 25 (inbound mail), 465/587 (submission), 993 (IMAPS), 80/443 (Caddy),
+# 2465/2587 (5050 Send SMTP relay). Everything else (Postgres, Stalwart's HTTP/JMAP
+# and admin API, the internal relay port for Send) stays on the internal network.
+#
+# Sizing: runs on 2 vCPU / 4 GB. Node services run one process per core
+# (WEB_CONCURRENCY=auto); see README "Resources and scaling".
+
+name: 5050-mail
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+x-hardening: &hardening
+  restart: unless-stopped
+  logging: *logging
+  security_opt: ["no-new-privileges:true"]
+  networks: [internal]
+
+x-send-env: &send-env
+  NODE_ENV: production
+  DATABASE_URL: postgres://send:${SEND_DB_PASSWORD:?}@postgres:5432/send
+  PG_POOL_MAX: ${SEND_PG_POOL_MAX:-5}
+  STALWART_URL: http://stalwart:8080
+  SESSION_SECRET: ${SEND_SESSION_SECRET:?}
+  TRANSPORT: ${SEND_TRANSPORT:-smtp}
+  SMTP_RELAY_URL: smtp://stalwart:2525
+  DOMAIN_RECORDS: ${SEND_DOMAIN_RECORDS:-local}
+  MAIL_DOMAIN: ${MAIL_DOMAIN:?}
+  MAIL_HOSTNAME: ${MAIL_HOSTNAME:?}
+  API_HOST: ${API_HOST:?}
+  DASHBOARD_HOST: ${SEND_HOST:?}
+  PUBLIC_API_BASE: https://${API_HOST}
+  DASHBOARD_BASE: https://${SEND_HOST}
+  DOCS_BASE: ${DOCS_BASE:-https://github.com/musakkka/5050-mail}
+  SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+  INBOUND_MX_HOST: ${MAIL_HOSTNAME}
+  SMTP_HOSTNAME: ${MAIL_HOSTNAME}
+  TRUST_PROXY: "1"
+  CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+  CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+  DEFAULT_RATE_LIMIT: ${SEND_DEFAULT_RATE_LIMIT:-10}
+  DEFAULT_MONTHLY_QUOTA: ${SEND_DEFAULT_MONTHLY_QUOTA:-50000}
+  SANDBOX_DOMAIN: ${SEND_SANDBOX_DOMAIN:-resend.dev}
+
+networks:
+  internal:
+    ipam:
+      config:
+        - subnet: ${INTERNAL_SUBNET:-172.30.50.0/24}
+
+volumes:
+  postgres-data:
+  stalwart-data:
+  stalwart-etc:
+  caddy-data:
+  caddy-config:
+
+services:
+  postgres:
+    <<: *hardening
+    image: postgres:16.10-alpine
+    command: ["postgres", "-c", "max_connections=200", "-c", "shared_buffers=256MB"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      STALWART_DB_PASSWORD: ${STALWART_DB_PASSWORD:?}
+      SEND_DB_PASSWORD: ${SEND_DB_PASSWORD:?}
+      WEBMAIL_DB_PASSWORD: ${WEBMAIL_DB_PASSWORD:?}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/10-5050-mail.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  stalwart:
+    <<: *hardening
+    # Upstream image, pinned by digest (AGPL-3.0, https://github.com/stalwartlabs/stalwart).
+    image: stalwartlabs/stalwart:v0.16.27@sha256:c429b311c93db5606598abc1c68225a85a6953183848ae01bee9c6a98885836c
+    environment:
+      STALWART_DB_PASSWORD: ${STALWART_DB_PASSWORD:?}
+      # Recovery admin "user:password" used by the bootstrap and for emergencies (never exposed publicly).
+      STALWART_RECOVERY_ADMIN: ${STALWART_ADMIN:?}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      RELAY_PASSWORD: ${RELAY_PASSWORD:-}
+    volumes:
+      # Named so `down -v` removes it (the image declares VOLUME /etc/stalwart).
+      - stalwart-etc:/etc/stalwart
+      - ../server/config.json:/etc/stalwart/config.json:ro
+      - stalwart-data:/var/lib/stalwart
+    ports:
+      - "25:25"
+      - "465:465"
+      - "587:587"
+      - "993:993"
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/healthz/live || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  webmail:
+    <<: *hardening
+    build: ../apps/webmail
+    image: ${IMAGE_PREFIX:-ghcr.io/musakkka/5050-mail}-webmail:${VERSION:-latest}
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      NODE_ENV: production
+      STALWART_URL: http://stalwart:8080
+      DATABASE_URL: postgres://webmail:${WEBMAIL_DB_PASSWORD:?}@postgres:5432/webmail
+      SESSION_SECRET: ${WEBMAIL_SESSION_SECRET:?}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-auto}
+      PG_POOL_MAX: "4"
+      TRUST_PROXY: "1"
+      # Caddy's address space: only it may set X-Forwarded-For / -Proto / -Host.
+      TRUSTED_PROXIES: ${INTERNAL_SUBNET:-172.30.50.0/24}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      MAIL_DOMAIN: ${MAIL_DOMAIN:?}
+      MAIL_HOSTNAME: ${MAIL_HOSTNAME:?}
+      PUBLIC_URL: https://${MAIL_HOSTNAME}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+      CLOUDFLARE_EMAIL_SENDING: ${CLOUDFLARE_EMAIL_SENDING:-0}
+      DNS_SERVERS: ${DNS_SERVERS:-}
+    depends_on:
+      postgres: { condition: service_healthy }
+      stalwart: { condition: service_healthy }
+
+  send-web:
+    <<: *hardening
+    build: ../apps/send
+    image: ${IMAGE_PREFIX:-ghcr.io/musakkka/5050-mail}-send:${VERSION:-latest}
+    command: ["node", "dist/cluster.js", "web"]
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      <<: *send-env
+      ROLE: web
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-auto}
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  send-worker:
+    <<: *hardening
+    build: ../apps/send
+    image: ${IMAGE_PREFIX:-ghcr.io/musakkka/5050-mail}-send:${VERSION:-latest}
+    command: ["node", "dist/cluster.js", "worker"]
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      <<: *send-env
+      ROLE: worker
+      WORKER_CONCURRENCY: ${SEND_WORKER_CONCURRENCY:-1}
+    depends_on:
+      send-web: { condition: service_healthy }
+      stalwart: { condition: service_healthy }
+
+  # SMTP relay for apps that can't use the HTTP API (user "resend", password = API key).
+  # Uses the mail host's certificate from Caddy's volume (root-owned, so this
+  # container runs as root with every capability dropped and a read-only filesystem).
+  send-smtp:
+    <<: *hardening
+    build: ../apps/send
+    image: ${IMAGE_PREFIX:-ghcr.io/musakkka/5050-mail}-send:${VERSION:-latest}
+    user: "0:0"
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: [/tmp]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        i=0; while [ ! -s "$$SMTP_TLS_CERT" ] && [ $$i -lt 120 ]; do i=$$((i+1)); sleep 5; done
+        [ -s "$$SMTP_TLS_CERT" ] || echo "no certificate at $$SMTP_TLS_CERT yet; check Caddy" >&2
+        exec node dist/cluster.js smtp
+    environment:
+      <<: *send-env
+      ROLE: smtp
+      WEB_CONCURRENCY: ${SEND_SMTP_CONCURRENCY:-1}
+      SMTP_PORTS_TLS: "2465"
+      SMTP_PORTS_STARTTLS: "2587"
+      SMTP_TLS_CERT: /caddy/caddy/certificates/${CADDY_CERT_ISSUER:-acme-v02.api.letsencrypt.org-directory}/${MAIL_HOSTNAME}/${MAIL_HOSTNAME}.crt
+      SMTP_TLS_KEY: /caddy/caddy/certificates/${CADDY_CERT_ISSUER:-acme-v02.api.letsencrypt.org-directory}/${MAIL_HOSTNAME}/${MAIL_HOSTNAME}.key
+    volumes:
+      - caddy-data:/caddy:ro
+    ports:
+      - "2465:2465"
+      - "2587:2587"
+    depends_on:
+      send-web: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "dist/healthcheck.js"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 600s
+
+  caddy:
+    <<: *hardening
+    image: caddy:2.10.2-alpine
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?}
+      MAIL_HOSTNAME: ${MAIL_HOSTNAME:?}
+      SEND_HOST: ${SEND_HOST:?}
+      API_HOST: ${API_HOST:?}
+      CADDY_GLOBAL_OPTIONS: ${CADDY_GLOBAL_OPTIONS:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    depends_on:
+      - webmail
+      - send-web
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # One-shot: reconcile Stalwart's settings, first domain and admin mailbox (install.sh runs it).
+  bootstrap:
+    profiles: ["tools"]
+    image: node:22-alpine
+    restart: "no"
+    networks: [internal]
+    volumes:
+      - ../server/bootstrap.mjs:/bootstrap.mjs:ro
+    entrypoint: ["node", "/bootstrap.mjs"]
+    environment:
+      STALWART_URL: http://stalwart:8080
+      STALWART_ADMIN: ${STALWART_ADMIN:?}
+      MAIL_DOMAIN: ${MAIL_DOMAIN:?}
+      MAIL_HOSTNAME: ${MAIL_HOSTNAME:?}
+      SEND_HOST: ${SEND_HOST:?}
+      API_HOST: ${API_HOST:?}
+      PUBLIC_IPV4: ${PUBLIC_IPV4:-}
+      PUBLIC_IPV6: ${PUBLIC_IPV6:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrator}
+      ACME_EMAIL: ${ACME_EMAIL:?}
+      TLS_MODE: ${STALWART_TLS_MODE:-acme}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ZONE: ${CLOUDFLARE_ZONE:-}
+      RELAY_HOST: ${RELAY_HOST:-}
+      RELAY_PORT: ${RELAY_PORT:-587}
+      RELAY_USERNAME: ${RELAY_USERNAME:-}
+      RELAY_PASSWORD: ${RELAY_PASSWORD:-}
+    depends_on:
+      stalwart: { condition: service_healthy }

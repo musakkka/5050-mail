@@ -1,0 +1,15 @@
+node_modules/
+dist/
+dist-mock/
+.env
+.env.*
+!.env.example
+*.log
+test-results/
+playwright-report/
+parity/out/
+.venv*/
+.DS_Store
+*.tsbuildinfo
+demo/.work/
+demo/node_modules

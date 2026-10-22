@@ -1,0 +1,19 @@
+# gitleaks: extend the default rules; allow documented example values only.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Example tokens copied from public API docs, test-only passwords and placeholder keys"
+paths = [
+  '''apps/send/test/docs-examples/examples\.json''',
+  '''apps/send/verify/docs/doc-responses\.json''',
+  '''apps/send/docs/.*\.md''',
+  '''.*\.test\.ts''',
+  '''.*/e2e/.*\.spec\.ts''',
+  '''apps/webmail/scripts/seed\.ts''',
+]
+regexes = [
+  '''re_AAAAAAAA_B+''',
+  '''YOUR_API_KEY''',
+  '''admin:devpass123''',
+]

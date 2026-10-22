@@ -1,0 +1,39 @@
+[21:10:03] stalwart (cpuset 0-3, mem 6g)
+created 32 users; notCreated: None
+http rate: {'count': 1000000, 'period': 1000} | smtp throttles enabled: [False, False]
+bench-stw up: http :18490 smtp :2925 cpus 0-3 mem 6g
+[21:10:21] SMTP ingest into Stalwart (port 25, no auth, 4 KB text, 10 msgs/session)
+{"conc":8,"total":800,"ok":800,"failed":0,"seconds":58.44,"msgs_per_sec":13.7,"p50_ms":369.9745409999996,"p95_ms":756.788916999998,"p99_ms":16304.682674,"errors":[]}
+{"conc":32,"total":2400,"ok":2400,"failed":0,"seconds":52.61,"msgs_per_sec":45.6,"p50_ms":614.258001000002,"p95_ms":1310.8756250000006,"p99_ms":1676.2131259999987,"errors":[]}
+[21:12:16] postgres for BFF sessions (cpuset 0-3, 512m)
+[21:12:21] webmail BFF: 1 process(es) via dist/server/cluster.js, Postgres sessions
+[21:12:22] mailboxes, 32 VUs
+{"scenario":"mailboxes","vus":32,"duration":"20s","requests":15201,"rps":760.05,"errors":0,"p50_ms":27.251292,"p95_ms":91.639875,"p99_ms":331.871542,"max_ms":1408.491251,"avg_ms":42.45435546135121}
+[21:12:57] mailboxes, 128 VUs
+{"scenario":"mailboxes","vus":128,"duration":"20s","requests":16831,"rps":841.55,"errors":0,"p50_ms":116.6255,"p95_ms":349.01252049999994,"p99_ms":551.8268044,"max_ms":1599.116751,"avg_ms":152.92943332713438}
+[21:13:24] threads, 32 VUs
+{"scenario":"threads","vus":32,"duration":"20s","requests":9993,"rps":499.65,"errors":0,"p50_ms":26.548958,"p95_ms":178.50810819999995,"p99_ms":711.60777036,"max_ms":4557.296877,"avg_ms":67.953045379866}
+[21:13:56] threads, 128 VUs
+{"scenario":"threads","vus":128,"duration":"20s","requests":10074,"rps":503.7,"errors":0,"p50_ms":208.0284375,"p95_ms":582.6486563499999,"p99_ms":749.2397374999998,"max_ms":2175.086792,"avg_ms":255.77222247806196}
+[21:14:20] search, 32 VUs
+{"scenario":"search","vus":32,"duration":"20s","requests":711,"rps":35.55,"errors":0,"p50_ms":298.855083,"p95_ms":4747.5986485,"p99_ms":15372.1443571,"max_ms":17144.992842,"avg_ms":1111.1098141547118}
+[21:14:58] search, 128 VUs
+{"scenario":"search","vus":128,"duration":"20s","requests":1391,"rps":69.55,"errors":0,"p50_ms":1753.389376,"p95_ms":5504.505877999998,"p99_ms":10232.662248899998,"max_ms":10942.179699,"avg_ms":2210.131131006467}
+[21:15:32] login, 16 VUs
+{"scenario":"login","vus":16,"duration":"20s","requests":2657,"rps":132.85,"errors":0,"p50_ms":75.593959,"p95_ms":324.0300253999999,"p99_ms":625.9712034399997,"max_ms":1420.290626,"avg_ms":120.31849135453547}
+[21:16:04] webmail BFF: 4 process(es) via dist/server/cluster.js, Postgres sessions
+[21:16:13] mailboxes, 32 VUs
+{"scenario":"mailboxes","vus":32,"duration":"20s","requests":995,"rps":49.75,"errors":0,"p50_ms":467.585625,"p95_ms":2175.503259799999,"p99_ms":5073.625439539996,"max_ms":6871.07492,"avg_ms":734.0715346361808}
+[21:16:45] mailboxes, 128 VUs
+{"scenario":"mailboxes","vus":128,"duration":"20s","requests":7455,"rps":372.75,"errors":0,"p50_ms":191.059376,"p95_ms":1241.3473252000001,"p99_ms":2050.545581,"max_ms":6508.671989,"avg_ms":341.98654577008483}
+[21:17:15] threads, 32 VUs
+{"scenario":"threads","vus":32,"duration":"20s","requests":4239,"rps":211.95,"errors":0,"p50_ms":86.647458,"p95_ms":477.83104579999963,"p99_ms":1215.2492931999993,"max_ms":2921.365626,"avg_ms":152.89251651545192}
+[21:17:42] threads, 128 VUs
+{"scenario":"threads","vus":128,"duration":"20s","requests":2942,"rps":147.1,"errors":0,"p50_ms":739.28298,"p95_ms":2568.1196873499875,"p99_ms":11743.75356281,"max_ms":12372.373465,"avg_ms":1235.4705662552676}
+[21:18:36] search, 32 VUs
+{"scenario":"search","vus":32,"duration":"20s","requests":146,"rps":7.3,"errors":0,"p50_ms":4811.9082735,"p95_ms":10425.02151125,"p99_ms":12089.17352605,"max_ms":12150.372283,"avg_ms":4942.275232897259}
+[21:20:15] search, 128 VUs
+{"scenario":"search","vus":128,"duration":"20s","requests":304,"rps":15.2,"errors":0,"p50_ms":10238.663685,"p95_ms":18937.5479649,"p99_ms":19664.84773952,"max_ms":20636.782037,"avg_ms":9907.265788756578}
+[21:20:57] login, 16 VUs
+{"scenario":"login","vus":16,"duration":"20s","requests":834,"rps":41.7,"errors":0,"p50_ms":288.01937499999997,"p95_ms":993.0663027499996,"p99_ms":1397.4043576399995,"max_ms":1845.140459,"avg_ms":389.1355277577937}
+[21:21:29] done

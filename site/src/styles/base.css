@@ -1,0 +1,155 @@
+/* 5050 Mail site: tokens, type, shell. Colours come from the 5050 brand kit
+   (https://5050markets.com/ke/brand): paper and ink, with the lime and aqua
+   plates as the only accents. Anything printed on a plate is set in ink. */
+
+@font-face { font-family: 'Archivo'; src: url('/fonts/archivo-wdth.woff2') format('woff2'); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+@font-face { font-family: 'Open Sauce One'; src: url('/fonts/opensauceone-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Open Sauce One'; src: url('/fonts/opensauceone-medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Open Sauce One'; src: url('/fonts/opensauceone-bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'JetBrains Mono'; src: url('/fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight: 400; font-display: swap; } /* taste-skill-ignore: code blocks and kbd only */
+
+:root {
+  --ground: #F4EFE3;      /* paper */
+  --surface: #FBF8F0;     /* paper hi */
+  --surface-2: #EAE3D2;   /* paper lo */
+  --edge: #D9D0BB;        /* paper edge, used for table rules only */
+  --ink: #1C1A24;
+  --ink-2: #47424F;
+  --ink-3: #5F5A69;       /* captions: darkened from #6E6878 to hold 4.5:1 on paper lo */
+  --lime: #B5ED13;
+  --aqua: #16C8F4;
+  --overlap: #10BA12;     /* lime multiplied by aqua: where the two plates meet */
+  --on-plate: #1C1A24;
+  --link: #1C1A24;
+  --code-bg: #1C1A24;
+  --code-ink: #F4EFE3;
+  --code-dim: #B8B1C2;
+  --code-str: #C4F53A;
+  --code-key: #3FD6FA;
+  --plate-blend: multiply;
+  --focus: #1C1A24;
+  --ok: #1A6E1F;
+  --bad: #C0281E;
+  --warn-bg: #FFE6A8;
+  --font-display: 'Archivo', 'Arial Narrow', system-ui, sans-serif;
+  --font-text: 'Open Sauce One', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-code: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace; /* taste-skill-ignore: code blocks and kbd only */
+  --margin: clamp(16px, 3.2vw, 40px);
+  --max: 1360px;
+  --radius: 6px;
+  --header-h: 64px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #1C1A24; --surface: #24212D; --surface-2: #2E2A38; --edge: #433E4F;
+    --ink: #F4EFE3; --ink-2: #D6CFC0; --ink-3: #B3ABBD;
+    --lime: #C4F53A; --aqua: #3FD6FA; --overlap: #D3FDFB;
+    --link: #F4EFE3; --code-bg: #121118; --plate-blend: screen; --focus: #C4F53A;
+    --ok: #8BE36B; --bad: #FF8A80; --warn-bg: #4A3A12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #1C1A24; --surface: #24212D; --surface-2: #2E2A38; --edge: #433E4F;
+  --ink: #F4EFE3; --ink-2: #D6CFC0; --ink-3: #B3ABBD;
+  --lime: #C4F53A; --aqua: #3FD6FA; --overlap: #D3FDFB;
+  --link: #F4EFE3; --code-bg: #121118; --plate-blend: screen; --focus: #C4F53A;
+  --ok: #8BE36B; --bad: #FF8A80; --warn-bg: #4A3A12;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 16px); }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { display: block; max-width: 100%; }
+a { color: var(--link); text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-color: var(--aqua); }
+a:hover { text-decoration-color: var(--lime); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+::selection { background: var(--lime); color: #1C1A24; }
+code, kbd, pre { font-family: var(--font-code); font-variant-numeric: normal; }
+kbd { font-size: 0.85em; padding: 1px 6px; border-radius: 4px; background: var(--surface-2); color: var(--ink); }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.skip { position: absolute; left: 8px; top: -60px; z-index: 100; background: var(--lime); color: #1C1A24; padding: 10px 14px; font-weight: 700; }
+.skip:focus { top: 8px; }
+
+/* The mark: two flat plates; where they overlap the ink darkens (screens on dark). */
+.mark { height: 30px; width: auto; overflow: visible; }
+.mark .plate--lime { fill: var(--lime); }
+.mark .plate--aqua { fill: var(--aqua); mix-blend-mode: var(--plate-blend); }
+.mark { isolation: isolate; }
+
+/* Header */
+.site-header { position: sticky; top: 0; z-index: 40; background: var(--ground); }
+.site-header__inner { max-width: var(--max); margin: 0 auto; padding: 0 var(--margin); height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; padding: 8px 0; min-height: 44px; }
+.site-nav { display: flex; align-items: center; gap: clamp(4px, 1.6vw, 22px); }
+.site-nav a { font-size: 15px; font-weight: 500; text-decoration: none; padding: 10px 4px; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; }
+.site-nav a:hover, .site-nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 3px; }
+.icon-btn { appearance: none; border: 0; background: transparent; color: var(--ink); width: 44px; height: 44px; display: inline-grid; place-items: center; border-radius: var(--radius); cursor: pointer; }
+.icon-btn:hover { background: var(--surface-2); }
+@media (max-width: 560px) {
+  .site-nav__gh span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .site-nav a[href="/#cost"] { display: none; }
+}
+
+/* Buttons. The primary button is the mark in miniature: a lime plate with the
+   aqua plate offset behind it (a hard shadow, per the brand), squashing flat
+   when pressed. */
+.btn {
+  --off: 4px;
+  appearance: none; border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 12px 22px;
+  font: 700 16px/1.2 var(--font-text); color: #1C1A24; text-decoration: none;
+  background: var(--lime); border-radius: var(--radius);
+  box-shadow: var(--off) var(--off) 0 0 var(--aqua); /* taste-skill-ignore: brand: hard offset plate, the 5050 two-plate motif */
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out; /* taste-skill-ignore: transition of the brand offset */
+}
+.btn:hover { --off: 6px; transform: translate(-2px, -2px); }
+.btn:active { --off: 0px; transform: translate(4px, 4px) scaleY(0.96); }
+.btn--ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); } /* taste-skill-ignore: outlined secondary button, a control edge */
+.btn--ghost:hover { --off: 0; transform: none; background: var(--surface-2); }
+.btn--ghost:active { transform: scaleY(0.96); }
+
+/* Copyable command (install line) */
+.cmd { display: flex; align-items: stretch; max-width: 100%; background: var(--code-bg); color: var(--code-ink); border-radius: var(--radius); overflow: hidden; }
+.cmd code { flex: 1 1 auto; min-width: 0; padding: 14px 16px; font-size: 14px; line-height: 1.5; white-space: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.cmd code::before { content: '$ '; color: var(--code-dim); }
+.cmd .copy { flex: 0 0 auto; border-radius: 0; }
+.copy {
+  appearance: none; border: 0; cursor: pointer; font: 700 14px/1 var(--font-text);
+  background: var(--lime); color: #1C1A24; padding: 0 16px; min-height: 44px; min-width: 76px; border-radius: 4px;
+}
+.copy:hover { background: var(--aqua); }
+.copy[data-done] { background: var(--aqua); }
+html:not(.js) .copy { display: none; }
+
+/* Code blocks (docs and landing) */
+.code { background: var(--code-bg); color: var(--code-ink); border-radius: var(--radius); margin: 20px 0; overflow: hidden; }
+.code__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 6px 6px 16px; background: rgba(255,255,255,0.06); }
+.code__label { font: 500 13px/1 var(--font-text); color: var(--code-dim); }
+.code .copy { min-height: 32px; min-width: 64px; font-size: 13px; }
+.code pre { margin: 0; padding: 14px 16px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6; tab-size: 2; }
+.t-c { color: var(--code-dim); }
+.t-s { color: var(--code-str); }
+.t-k { color: var(--code-key); }
+
+/* Theme toggle bootstrap for no-JS */
+html:not(.js) [data-theme-toggle] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

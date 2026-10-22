@@ -1,0 +1,105 @@
+/* One-click domain setup: checklist, mode picker, Sending card. Uses the theme tokens only. */
+.adm-checklist {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.adm-checklist__item {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 2px 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--md-outline-variant);
+  font-size: 14px;
+}
+.adm-checklist__item:last-child {
+  border-bottom: 0;
+  font-weight: 500;
+}
+.adm-checklist__glyph {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+}
+.adm-checklist__item--done .adm-checklist__glyph {
+  color: #137333;
+}
+[data-theme='dark'] .adm-checklist__item--done .adm-checklist__glyph {
+  color: #81c995;
+}
+.adm-checklist__item--error .adm-checklist__glyph {
+  color: var(--md-error);
+}
+.adm-checklist__item--waiting,
+.adm-checklist__item--skipped {
+  color: var(--md-outline);
+}
+.adm-checklist__detail {
+  grid-column: 2;
+  font-size: 12px;
+  color: var(--md-outline);
+  overflow-wrap: anywhere;
+}
+.adm-checklist__item--error .adm-checklist__detail {
+  color: var(--md-error);
+}
+.adm-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid var(--md-primary-container);
+  border-top-color: var(--md-primary);
+  animation: adm-spin 0.9s linear infinite;
+}
+@keyframes adm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .adm-spinner {
+    animation-duration: 3s;
+  }
+}
+.adm-setup-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+@media (max-width: 600px) {
+  .adm-setup-modes {
+    grid-template-columns: 1fr;
+  }
+}
+.adm-setup-mode {
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0;
+}
+.adm-setup-mode--on {
+  border-color: var(--md-primary);
+  background: var(--md-surface-container);
+}
+.adm-connect-summary {
+  font-size: 13px;
+  color: var(--md-outline);
+  margin: 4px 0 12px;
+}
+.adm-sending__actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+.adm-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

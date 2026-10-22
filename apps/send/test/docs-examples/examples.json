@@ -1,0 +1,1407 @@
+[
+ {
+  "page": "api-keys/create-api-key",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.apiKeys.create({ name: 'Production' });"
+ },
+ {
+  "page": "api-keys/create-api-key",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/api-keys' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Production\"\n}'"
+ },
+ {
+  "page": "api-keys/delete-api-key",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.apiKeys.remove(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n);"
+ },
+ {
+  "page": "api-keys/delete-api-key",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/api-keys/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "api-keys/list-api-keys",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.apiKeys.list();"
+ },
+ {
+  "page": "api-keys/list-api-keys",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/api-keys' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "api-keys/update-api-key",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.apiKeys.update(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n  { name: 'Production' },\n);"
+ },
+ {
+  "page": "api-keys/update-api-key",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/api-keys/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Production\"\n}'"
+ },
+ {
+  "page": "automations/create-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.create({\n  name: 'Welcome series',\n  status: 'disabled',\n  steps: [\n    {\n      key: 'start',\n      type: 'trigger',\n      config: { eventName: 'user.created' },\n    },\n    {\n      key: 'welcome',\n      type: 'send_email',\n      config: {\n        template: { id: '34a080c9-b17d-4187-ad80-5af20266e535' },\n      },\n    },\n  ],\n  connections: [{ from: 'start', to: 'welcome' }],\n});"
+ },
+ {
+  "page": "automations/create-automation",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/automations' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"name\": \"Welcome series\",\n  \"steps\": [\n    {\n      \"key\": \"start\",\n      \"type\": \"trigger\",\n      \"config\": { \"event_name\": \"user.created\" }\n    },\n    {\n      \"key\": \"welcome\",\n      \"type\": \"send_email\",\n      \"config\": {\n        \"template\": { \"id\": \"34a080c9-b17d-4187-ad80-5af20266e535\" }\n      }\n    }\n  ],\n  \"connections\": [\n    { \"from\": \"start\", \"to\": \"welcome\" }\n  ]\n}'"
+ },
+ {
+  "page": "automations/delete-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.remove(\n  'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n);"
+ },
+ {
+  "page": "automations/delete-automation",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/duplicate-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.duplicate(\n  'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n);"
+ },
+ {
+  "page": "automations/duplicate-automation",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd/duplicate' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/get-automation-run",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.runs.get({\n  automationId: 'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n  runId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',\n});"
+ },
+ {
+  "page": "automations/get-automation-run",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd/runs/a1b2c3d4-e5f6-7890-abcd-ef1234567890' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/get-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.get(\n  'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n);"
+ },
+ {
+  "page": "automations/get-automation",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/list-automation-runs",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.runs.list({\n  automationId: 'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n  status: 'completed',\n});"
+ },
+ {
+  "page": "automations/list-automation-runs",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd/runs?status=completed' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/list-automations",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.list();"
+ },
+ {
+  "page": "automations/list-automations",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/automations' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/stop-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.stop(\n  'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n);"
+ },
+ {
+  "page": "automations/stop-automation",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd/stop' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "automations/update-automation",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.automations.update(\n  'c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd',\n  { status: 'enabled' },\n);"
+ },
+ {
+  "page": "automations/update-automation",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/automations/c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"status\": \"enabled\"\n}'"
+ },
+ {
+  "page": "broadcasts/cancel-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.cancel(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n);"
+ },
+ {
+  "page": "broadcasts/cancel-broadcast",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b/cancel' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "broadcasts/create-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\n// Create a draft broadcast\nconst { data, error } = await resend.broadcasts.create({\n  segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n  from: 'Acme <onboarding@resend.dev>',\n  subject: 'hello world',\n  html: 'Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}',\n});\n\n// Create and send immediately\nconst { data: sent, error: sendError } = await resend.broadcasts.create({\n  segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n  from: 'Acme <onboarding@resend.dev>',\n  subject: 'hello world',\n  html: 'Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}',\n  send: true,\n});\n\n// Create and schedule\nconst { data: scheduled, error: scheduleError } =\n  await resend.broadcasts.create({\n    segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n    from: 'Acme <onboarding@resend.dev>',\n    subject: 'hello world',\n    html: 'Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}',\n    send: true,\n    scheduledAt: 'in 1 hour',\n  });"
+ },
+ {
+  "page": "broadcasts/create-broadcast",
+  "lang": "cURL",
+  "code": "# Create a draft broadcast\ncurl -X POST 'https://api.resend.com/broadcasts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'\n{\n  \"segment_id\": \"78261eea-8f8b-4381-83c6-79fa7120f1cf\",\n  \"from\": \"Acme <onboarding@resend.dev>\",\n  \"subject\": \"hello world\",\n  \"html\": \"Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}\"\n}'\n\n# Create and send immediately\ncurl -X POST 'https://api.resend.com/broadcasts' \\\n -H 'Authorization: Bearer re_xxxxxxxxx' \\\n -H 'Content-Type: application/json' \\\n -d $'\n{\n  \"segment_id\": \"78261eea-8f8b-4381-83c6-79fa7120f1cf\",\n  \"from\": \"Acme <onboarding@resend.dev>\",\n  \"subject\": \"hello world\",\n  \"html\": \"Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}\",\n  \"send\": true\n}'\n\n# Create and schedule\ncurl -X POST 'https://api.resend.com/broadcasts' \\\n -H 'Authorization: Bearer re_xxxxxxxxx' \\\n -H 'Content-Type: application/json' \\\n -d $'\n{\n  \"segment_id\": \"78261eea-8f8b-4381-83c6-79fa7120f1cf\",\n  \"from\": \"Acme <onboarding@resend.dev>\",\n  \"subject\": \"hello world\",\n  \"html\": \"Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}\",\n  \"send\": true,\n  \"scheduled_at\": \"in 1 hour\"\n}'"
+ },
+ {
+  "page": "broadcasts/delete-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.remove(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n);"
+ },
+ {
+  "page": "broadcasts/delete-broadcast",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "broadcasts/duplicate-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.duplicate(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n);"
+ },
+ {
+  "page": "broadcasts/duplicate-broadcast",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b/duplicate' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "broadcasts/get-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.get(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n);"
+ },
+ {
+  "page": "broadcasts/get-broadcast",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "broadcasts/list-broadcast-clicked-links",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.clickedLinks(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n  { limit: 20 },\n);"
+ },
+ {
+  "page": "broadcasts/list-broadcast-clicked-links",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b/clicked-links?limit=20' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "broadcasts/list-broadcast-recipients",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.recipients(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n  { type: 'clicked', limit: 20 },\n);"
+ },
+ {
+  "page": "broadcasts/list-broadcast-recipients",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b/recipients?type=clicked&limit=20' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "broadcasts/list-broadcasts",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.list();"
+ },
+ {
+  "page": "broadcasts/list-broadcasts",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/broadcasts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "broadcasts/send-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.send(\n  '559ac32e-9ef5-46fb-82a1-b76b840c0f7b',\n  {\n    scheduledAt: 'in 1 min',\n  },\n);"
+ },
+ {
+  "page": "broadcasts/send-broadcast",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/broadcasts/559ac32e-9ef5-46fb-82a1-b76b840c0f7b/send' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"scheduled_at\": \"in 1 min\"\n}'"
+ },
+ {
+  "page": "broadcasts/update-broadcast",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.broadcasts.update(\n  '49a3999c-0ce1-4ea6-ab68-afcd6dc2e794',\n  {\n    html: 'Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}',\n  },\n);"
+ },
+ {
+  "page": "broadcasts/update-broadcast",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/broadcasts/49a3999c-0ce1-4ea6-ab68-afcd6dc2e794' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"html\": \"Hi {{{contact.first_name|there}}}, you can unsubscribe here: {{{RESEND_UNSUBSCRIBE_URL}}}\"\n}'"
+ },
+ {
+  "page": "contact-properties/create-contact-property",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contactProperties.create({\n  key: 'company_name',\n  type: 'string',\n  fallbackValue: 'Acme Corp',\n});"
+ },
+ {
+  "page": "contact-properties/create-contact-property",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/contact-properties' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"key\": \"company_name\",\n  \"type\": \"string\",\n  \"fallback_value\": \"Acme Corp\"\n}'"
+ },
+ {
+  "page": "contact-properties/delete-contact-property",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contactProperties.remove(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n);"
+ },
+ {
+  "page": "contact-properties/delete-contact-property",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/contact-properties/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contact-properties/get-contact-property",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contactProperties.get(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n);"
+ },
+ {
+  "page": "contact-properties/get-contact-property",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contact-properties/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contact-properties/list-contact-properties",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contactProperties.list();"
+ },
+ {
+  "page": "contact-properties/list-contact-properties",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contact-properties' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contact-properties/update-contact-property",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contactProperties.update({\n  id: 'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n  fallbackValue: 'Example Company',\n});"
+ },
+ {
+  "page": "contact-properties/update-contact-property",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/contact-properties/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"fallback_value\": \"Example Company\"\n}'"
+ },
+ {
+  "page": "contacts/add-contact-to-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.segments.add({\n  contactId: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'steve.wozniak@gmail.com',\n  segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n});"
+ },
+ {
+  "page": "contacts/add-contact-to-segment",
+  "lang": "cURL",
+  "code": "// Update by contact id\ncurl -X POST 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n// Update by contact email\ncurl -X POST 'https://api.resend.com/contacts/steve.wozniak@gmail.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "contacts/create-contact-import",
+  "lang": "Node.js",
+  "code": "import { readFile } from 'node:fs/promises';\nimport { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst file = new Blob([await readFile('contacts.csv')], {\n  type: 'text/csv',\n});\n\nconst { data, error } = await resend.contacts.imports.create({\n  file,\n  columnMap: {\n    email: 'Email',\n    firstName: 'First Name',\n    lastName: 'Last Name',\n    properties: {\n      plan: {\n        column: 'Plan',\n        type: 'string',\n      },\n    },\n  },\n  onConflict: 'upsert',\n  segments: [{ id: '78e7a5c6-9a91-4c63-9d1f-3b9c0b5b9ab6' }],\n  topics: [\n    {\n      id: '059ac693-2fc8-4c13-8b27-01350d638a17',\n      subscription: 'opt_in',\n    },\n  ],\n});"
+ },
+ {
+  "page": "contacts/create-contact-import",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/contacts/imports' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -F 'file=@contacts.csv;type=text/csv' \\\n     -F 'column_map={\"email\":\"Email\",\"first_name\":\"First Name\",\"last_name\":\"Last Name\",\"properties\":{\"plan\":{\"column\":\"Plan\",\"type\":\"string\"}}}' \\\n     -F 'on_conflict=upsert' \\\n     -F 'segments=[{\"id\":\"78e7a5c6-9a91-4c63-9d1f-3b9c0b5b9ab6\"}]' \\\n     -F 'topics=[{\"id\":\"059ac693-2fc8-4c13-8b27-01350d638a17\",\"subscription\":\"opt_in\"}]'"
+ },
+ {
+  "page": "contacts/create-contact",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.create({\n  email: 'steve.wozniak@gmail.com',\n  firstName: 'Steve',\n  lastName: 'Wozniak',\n  unsubscribed: false,\n});"
+ },
+ {
+  "page": "contacts/create-contact",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/contacts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"email\": \"steve.wozniak@gmail.com\",\n  \"first_name\": \"Steve\",\n  \"last_name\": \"Wozniak\",\n  \"unsubscribed\": false\n}'"
+ },
+ {
+  "page": "contacts/delete-contact-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.segments.remove({\n  contactId: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'steve.wozniak@gmail.com',\n  segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n});"
+ },
+ {
+  "page": "contacts/delete-contact-segment",
+  "lang": "cURL",
+  "code": "# Remove by contact id\ncurl -X DELETE 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Remove by contact email\ncurl -X DELETE 'https://api.resend.com/contacts/steve.wozniak@gmail.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "contacts/delete-contact",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.remove({\n  id: '520784e2-887d-4c25-b53c-4ad46ad38100',\n  // or: email: 'acme@example.com',\n});"
+ },
+ {
+  "page": "contacts/delete-contact",
+  "lang": "cURL",
+  "code": "# Delete by contact id\ncurl -X DELETE 'https://api.resend.com/contacts/520784e2-887d-4c25-b53c-4ad46ad38100' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Deleted by contact email\ncurl -X DELETE 'https://api.resend.com/contacts/acme@example.com' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/get-contact-import",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.imports.get(\n  '479e3145-dd38-476b-932c-529ceb705947',\n);"
+ },
+ {
+  "page": "contacts/get-contact-import",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contacts/imports/479e3145-dd38-476b-932c-529ceb705947' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/get-contact-topics",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.topics.list({\n  id: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'steve.wozniak@gmail.com',\n});"
+ },
+ {
+  "page": "contacts/get-contact-topics",
+  "lang": "cURL",
+  "code": "// Get by contact id\ncurl -X GET 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n// Get by contact email\ncurl -X GET 'https://api.resend.com/contacts/steve.wozniak@gmail.com/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/get-contact",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.get({\n  id: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'steve.wozniak@gmail.com',\n});"
+ },
+ {
+  "page": "contacts/get-contact",
+  "lang": "cURL",
+  "code": "# Get by contact id\ncurl -X GET 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Get by contact email\ncurl -X GET 'https://api.resend.com/contacts/steve.wozniak@gmail.com' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/list-contact-imports",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.imports.list({\n  limit: 10,\n  status: 'completed',\n});"
+ },
+ {
+  "page": "contacts/list-contact-imports",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contacts/imports?limit=10&status=completed' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/list-contact-segments",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.segments.list({\n  contactId: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n});"
+ },
+ {
+  "page": "contacts/list-contact-segments",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3/segments' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/list-contacts",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.list();"
+ },
+ {
+  "page": "contacts/list-contacts",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contacts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "contacts/update-contact-topics",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.topics.update({\n  id: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'steve.wozniak@gmail.com',\n  topics: [\n    {\n      id: 'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n      subscription: 'opt_out',\n    },\n    {\n      id: '07d84122-7224-4881-9c31-1c048e204602',\n      subscription: 'opt_in',\n    },\n  ],\n});"
+ },
+ {
+  "page": "contacts/update-contact-topics",
+  "lang": "cURL",
+  "code": "// Update by contact id\ncurl -X PATCH 'https://api.resend.com/contacts/e169aa45-1ecf-4183-9955-b1499d5701d3/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'[\n      {\n        \"id\": \"b6d24b8e-af0b-4c3c-be0c-359bbd97381e\",\n        \"subscription\": \"opt_out\"\n      }\n     ]'\n\n// Update by contact email\ncurl -X PATCH 'https://api.resend.com/contacts/steve.wozniak@gmail.com/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'[\n      {\n        \"id\": \"b6d24b8e-af0b-4c3c-be0c-359bbd97381e\",\n        \"subscription\": \"opt_out\"\n      }\n     ]'"
+ },
+ {
+  "page": "contacts/update-contact",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.update({\n  id: 'e169aa45-1ecf-4183-9955-b1499d5701d3',\n  // or: email: 'acme@example.com',\n  unsubscribed: true,\n});"
+ },
+ {
+  "page": "contacts/update-contact",
+  "lang": "cURL",
+  "code": "# Update by contact id\ncurl -X PATCH 'https://api.resend.com/contacts/520784e2-887d-4c25-b53c-4ad46ad38100' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"unsubscribed\": true\n}'\n\n# Update by contact email\ncurl -X PATCH 'https://api.resend.com/contacts/acme@example.com' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"unsubscribed\": true\n}'"
+ },
+ {
+  "page": "domains/claim-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.claims.create({\n  name: 'example.com',\n});"
+ },
+ {
+  "page": "domains/claim-domain",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/domains/claim' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"example.com\"\n}'"
+ },
+ {
+  "page": "domains/create-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.create({ name: 'example.com' });"
+ },
+ {
+  "page": "domains/create-domain",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/domains' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"example.com\"\n}'"
+ },
+ {
+  "page": "domains/delete-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.remove(\n  'd91cd9bd-1176-453e-8fc1-35364d380206',\n);"
+ },
+ {
+  "page": "domains/delete-domain",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/domains/d91cd9bd-1176-453e-8fc1-35364d380206' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "domains/get-domain-claim",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.claims.get(\n  'd91cd9bd-1176-453e-8fc1-35364d380206',\n);"
+ },
+ {
+  "page": "domains/get-domain-claim",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/domains/d91cd9bd-1176-453e-8fc1-35364d380206/claim' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "domains/get-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.get(\n  'd91cd9bd-1176-453e-8fc1-35364d380206',\n);"
+ },
+ {
+  "page": "domains/get-domain",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/domains/d91cd9bd-1176-453e-8fc1-35364d380206' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "domains/list-domains",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.list();"
+ },
+ {
+  "page": "domains/list-domains",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/domains' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "domains/update-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.update({\n  id: 'b8617ad3-b712-41d9-81a0-f7c3d879314e',\n  openTracking: false,\n  clickTracking: true,\n  trackingSubdomain: 'links',\n  tls: 'enforced',\n});"
+ },
+ {
+  "page": "domains/update-domain",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/domains/b8617ad3-b712-41d9-81a0-f7c3d879314e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"open_tracking\": false,\n  \"click_tracking\": true,\n  \"tracking_subdomain\": \"links\",\n  \"tls\": \"enforced\"\n}'"
+ },
+ {
+  "page": "domains/verify-domain-claim",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.claims.verify(\n  'd91cd9bd-1176-453e-8fc1-35364d380206',\n);"
+ },
+ {
+  "page": "domains/verify-domain-claim",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/domains/d91cd9bd-1176-453e-8fc1-35364d380206/claim/verify' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "domains/verify-domain",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.domains.verify(\n  'd91cd9bd-1176-453e-8fc1-35364d380206',\n);"
+ },
+ {
+  "page": "domains/verify-domain",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/domains/d91cd9bd-1176-453e-8fc1-35364d380206/verify' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "emails/cancel-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.cancel(\n  '49a3999c-0ce1-4ea6-ab68-afcd6dc2e794',\n);"
+ },
+ {
+  "page": "emails/cancel-email",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/emails/49a3999c-0ce1-4ea6-ab68-afcd6dc2e794/cancel' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "emails/get-metrics",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data } = await resend.emails.metrics({\n  startDate: '2026-07-01',\n  endDate: '2026-07-08',\n  metrics: ['sent', 'delivered', 'open_rate'],\n  dimensions: ['period', 'broadcast'],\n  broadcastId: ['5a5a3b1e-3b1a-4b1a-8b1a-3b1a4b1a8b1a'],\n});"
+ },
+ {
+  "page": "emails/get-metrics",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/metrics?start_date=2026-07-01&end_date=2026-07-08&metrics=sent,delivered,open_rate&dimensions=period,domain' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/list-email-attachments",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.attachments.list({\n  emailId: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c',\n});"
+ },
+ {
+  "page": "emails/list-email-attachments",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/list-emails",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.list();"
+ },
+ {
+  "page": "emails/list-emails",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/list-received-email-attachments",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.receiving.attachments.list({\n  emailId: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c',\n});"
+ },
+ {
+  "page": "emails/list-received-email-attachments",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/receiving/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/list-received-emails",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.receiving.list();"
+ },
+ {
+  "page": "emails/list-received-emails",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/receiving' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/retrieve-email-attachment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.attachments.get({\n  id: '2a0c9ce0-3112-4728-976e-47ddcd16a318',\n  emailId: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c',\n});"
+ },
+ {
+  "page": "emails/retrieve-email-attachment",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/retrieve-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.get(\n  '37e4414c-5e25-4dbc-a071-43552a4bd53b',\n);"
+ },
+ {
+  "page": "emails/retrieve-email",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/4ef9a417-02e9-4d39-ad75-9611e0fcc33c' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/retrieve-received-email-attachment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.receiving.attachments.get({\n  id: '2a0c9ce0-3112-4728-976e-47ddcd16a318',\n  emailId: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c',\n});"
+ },
+ {
+  "page": "emails/retrieve-received-email-attachment",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/receiving/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/retrieve-received-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.receiving.get(\n  '37e4414c-5e25-4dbc-a071-43552a4bd53b',\n);"
+ },
+ {
+  "page": "emails/retrieve-received-email",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/emails/receiving/4ef9a417-02e9-4d39-ad75-9611e0fcc33c' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "emails/send-batch-emails",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.batch.send([\n  {\n    from: 'Acme <onboarding@resend.dev>',\n    to: ['foo@gmail.com'],\n    subject: 'hello world',\n    html: '<h1>it works!</h1>',\n  },\n  {\n    from: 'Acme <onboarding@resend.dev>',\n    to: ['bar@outlook.com'],\n    subject: 'world hello',\n    html: '<p>it works!</p>',\n  },\n]);"
+ },
+ {
+  "page": "emails/send-batch-emails",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/emails/batch' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'[\n  {\n    \"from\": \"Acme <onboarding@resend.dev>\",\n    \"to\": [\"foo@gmail.com\"],\n    \"subject\": \"hello world\",\n    \"html\": \"<h1>it works!</h1>\"\n  },\n  {\n    \"from\": \"Acme <onboarding@resend.dev>\",\n    \"to\": [\"bar@outlook.com\"],\n    \"subject\": \"world hello\",\n    \"html\": \"<p>it works!</p>\"\n  }\n]'"
+ },
+ {
+  "page": "emails/send-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.send({\n  from: 'Acme <onboarding@resend.dev>',\n  to: ['delivered@resend.dev'],\n  subject: 'hello world',\n  html: '<p>it works!</p>',\n});"
+ },
+ {
+  "page": "emails/send-email",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/emails' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"from\": \"Acme <onboarding@resend.dev>\",\n  \"to\": [\"delivered@resend.dev\"],\n  \"subject\": \"hello world\",\n  \"html\": \"<p>it works!</p>\"\n}'"
+ },
+ {
+  "page": "emails/share-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.emails.share(\n  '49a3999c-0ce1-4ea6-ab68-afcd6dc2e794',\n  { expiresIn: '2 hours' },\n);"
+ },
+ {
+  "page": "emails/share-email",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/emails/49a3999c-0ce1-4ea6-ab68-afcd6dc2e794/share' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"expires_in\": \"2 hours\"\n}'"
+ },
+ {
+  "page": "emails/update-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst oneMinuteFromNow = new Date(Date.now() + 1000 * 60).toISOString();\n\nconst { data, error } = await resend.emails.update({\n  id: '49a3999c-0ce1-4ea6-ab68-afcd6dc2e794',\n  scheduledAt: oneMinuteFromNow,\n});"
+ },
+ {
+  "page": "emails/update-email",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/emails/49a3999c-0ce1-4ea6-ab68-afcd6dc2e794' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"scheduled_at\": \"2026-08-05T11:52:01.858Z\"\n}'"
+ },
+ {
+  "page": "events/create-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.create({\n  name: 'user.created',\n  schema: {\n    plan: 'string',\n  },\n});"
+ },
+ {
+  "page": "events/create-event",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/events' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"name\": \"user.created\",\n  \"schema\": {\n    \"plan\": \"string\"\n  }\n}'"
+ },
+ {
+  "page": "events/delete-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.remove('user.created');"
+ },
+ {
+  "page": "events/delete-event",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/events/user.created' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "events/get-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.get('user.created');"
+ },
+ {
+  "page": "events/get-event",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/events/user.created' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "events/list-events",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.list();"
+ },
+ {
+  "page": "events/list-events",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/events' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "events/send-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.send({\n  event: 'user.created',\n  contactId: '7f2e4a3b-dfbc-4e9a-8b2c-5f3a1d6e7c8b',\n  // or: email: 'steve.wozniak@gmail.com',\n  payload: {\n    plan: 'pro',\n  },\n});"
+ },
+ {
+  "page": "events/send-event",
+  "lang": "cURL",
+  "code": "# Trigger with a contact ID\ncurl -X POST 'https://api.resend.com/events/send' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"event\": \"user.created\",\n  \"contact_id\": \"7f2e4a3b-dfbc-4e9a-8b2c-5f3a1d6e7c8b\",\n  \"payload\": {\n    \"plan\": \"pro\"\n  }\n}'\n\n# Trigger with an email address\ncurl -X POST 'https://api.resend.com/events/send' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"event\": \"user.created\",\n  \"email\": \"steve.wozniak@gmail.com\",\n  \"payload\": {\n    \"plan\": \"pro\"\n  }\n}'"
+ },
+ {
+  "page": "events/update-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.events.update('user.created', {\n  schema: {\n    plan: 'string',\n    trial: 'boolean',\n  },\n});"
+ },
+ {
+  "page": "events/update-event",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/events/user.created' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"schema\": {\n    \"plan\": \"string\",\n    \"trial\": \"boolean\"\n  }\n}'"
+ },
+ {
+  "page": "inboxes/add-thread-labels",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.labels.add({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  labels: ['7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34'],\n});"
+ },
+ {
+  "page": "inboxes/add-thread-labels",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/labels' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"labels\": [\"7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34\"]\n}'"
+ },
+ {
+  "page": "inboxes/create-draft",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.create({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  to: ['ada@example.org'],\n  subject: 'Refund for order 1041',\n  html: '<p>Refund issued for order 1041.</p>',\n  text: 'Refund issued for order 1041.',\n  attachments: [\n    {\n      filename: 'note.txt',\n      content: 'aGVsbG8=',\n      contentType: 'text/plain',\n    },\n  ],\n});"
+ },
+ {
+  "page": "inboxes/create-draft",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"to\": [\"ada@example.org\"],\n  \"subject\": \"Refund for order 1041\",\n  \"html\": \"<p>Refund issued for order 1041.</p>\",\n  \"text\": \"Refund issued for order 1041.\",\n  \"attachments\": [\n    {\n      \"filename\": \"note.txt\",\n      \"content\": \"aGVsbG8=\",\n      \"content_type\": \"text/plain\"\n    }\n  ]\n}'"
+ },
+ {
+  "page": "inboxes/create-inbox",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.create({\n  emailAddress: 'support@example.com',\n  name: 'Customer Support',\n  fromName: 'Ada from Support',\n});"
+ },
+ {
+  "page": "inboxes/create-inbox",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"email_address\": \"support@example.com\",\n  \"name\": \"Customer Support\",\n  \"from_name\": \"Ada from Support\"\n}'"
+ },
+ {
+  "page": "inboxes/create-label",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.labels.create({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  name: 'Urgent',\n  color: '#E93D82',\n});"
+ },
+ {
+  "page": "inboxes/create-label",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/labels' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Urgent\",\n  \"color\": \"#E93D82\"\n}'"
+ },
+ {
+  "page": "inboxes/delete-draft",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.remove({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  draftId: 'c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32',\n});"
+ },
+ {
+  "page": "inboxes/delete-draft",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts/c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/delete-inbox",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.remove(\n  'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n);"
+ },
+ {
+  "page": "inboxes/delete-inbox",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/delete-label",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.labels.remove({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  labelId: '7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34',\n});"
+ },
+ {
+  "page": "inboxes/delete-label",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/labels/7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/delete-thread",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.remove({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n});"
+ },
+ {
+  "page": "inboxes/delete-thread",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/forward-thread-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.emails.forward({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  emailId: '5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60',\n  to: ['colleague@example.org'],\n  cc: ['billing@example.com'],\n  bcc: ['records@example.com'],\n  text: 'Flagging this refund request for you.',\n  attachments: [\n    {\n      path: 'https://resend.com/static/sample/invoice.pdf',\n      filename: 'invoice.pdf',\n    },\n  ],\n});"
+ },
+ {
+  "page": "inboxes/forward-thread-email",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/emails/5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60/forward' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"to\": [\"colleague@example.org\"],\n  \"cc\": [\"billing@example.com\"],\n  \"bcc\": [\"records@example.com\"],\n  \"text\": \"Flagging this refund request for you.\",\n  \"attachments\": [\n    {\n      \"path\": \"https://resend.com/static/sample/invoice.pdf\",\n      \"filename\": \"invoice.pdf\"\n    }\n  ]\n}'"
+ },
+ {
+  "page": "inboxes/get-agent",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.agent.get({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n});"
+ },
+ {
+  "page": "inboxes/get-agent",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/agent' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/get-draft",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.get({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  draftId: 'c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32',\n});"
+ },
+ {
+  "page": "inboxes/get-draft",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts/c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/get-inbox",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.get(\n  'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n);"
+ },
+ {
+  "page": "inboxes/get-inbox",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/get-thread-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.emails.get({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  emailId: '5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60',\n});"
+ },
+ {
+  "page": "inboxes/get-thread-email",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/emails/5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/get-thread",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.get({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n});"
+ },
+ {
+  "page": "inboxes/get-thread",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/list-drafts",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.list({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n});"
+ },
+ {
+  "page": "inboxes/list-drafts",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/list-inboxes",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.list();"
+ },
+ {
+  "page": "inboxes/list-inboxes",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/list-labels",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.labels.list({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n});"
+ },
+ {
+  "page": "inboxes/list-labels",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/labels' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/list-thread-emails",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.emails.list({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n});"
+ },
+ {
+  "page": "inboxes/list-thread-emails",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/emails' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/list-threads",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.list({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n});"
+ },
+ {
+  "page": "inboxes/list-threads",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/remove-thread-label",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.labels.remove({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  labelId: '7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34',\n});"
+ },
+ {
+  "page": "inboxes/remove-thread-label",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/labels/7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/reply-thread-email",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.emails.reply({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  emailId: '5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60',\n  cc: ['billing@example.com'],\n  bcc: ['records@example.com'],\n  html: '<p>Refund issued for order 1041.</p>',\n  text: 'Refund issued for order 1041.',\n  attachments: [\n    {\n      path: 'https://resend.com/static/sample/invoice.pdf',\n      filename: 'invoice.pdf',\n    },\n  ],\n});"
+ },
+ {
+  "page": "inboxes/reply-thread-email",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/emails/5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60/reply' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"cc\": [\"billing@example.com\"],\n  \"bcc\": [\"records@example.com\"],\n  \"html\": \"<p>Refund issued for order 1041.</p>\",\n  \"text\": \"Refund issued for order 1041.\",\n  \"attachments\": [\n    {\n      \"path\": \"https://resend.com/static/sample/invoice.pdf\",\n      \"filename\": \"invoice.pdf\"\n    }\n  ]\n}'"
+ },
+ {
+  "page": "inboxes/search-threads",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.search({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  query: 'invoice -draft',\n  from: ['isabella@example.com', 'carolina@example.com'],\n  startDate: '2026-09-01',\n  limit: 2,\n});"
+ },
+ {
+  "page": "inboxes/search-threads",
+  "lang": "cURL",
+  "code": "curl --get 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/search' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     --data-urlencode 'query=invoice -draft' \\\n     --data-urlencode 'from=isabella@example.com,carolina@example.com' \\\n     --data-urlencode 'start_date=2026-09-01' \\\n     --data-urlencode 'limit=2'"
+ },
+ {
+  "page": "inboxes/send-draft",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.send({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  draftId: 'c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32',\n});"
+ },
+ {
+  "page": "inboxes/send-draft",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts/c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32/send' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "inboxes/set-thread-labels",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.labels.set({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  labels: ['2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d'],\n});"
+ },
+ {
+  "page": "inboxes/set-thread-labels",
+  "lang": "cURL",
+  "code": "curl -X PUT 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12/labels' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"labels\": [\"2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d\"]\n}'"
+ },
+ {
+  "page": "inboxes/update-agent",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.agent.update({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  instructions: 'Answer refund questions yourself. Escalate legal threats.',\n  tone: 'concise_professional',\n  actions: ['draft_reply', 'add_labels'],\n});"
+ },
+ {
+  "page": "inboxes/update-agent",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/agent' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"instructions\": \"Answer refund questions yourself. Escalate legal threats.\",\n  \"tone\": \"concise_professional\",\n  \"actions\": [\"draft_reply\", \"add_labels\"]\n}'"
+ },
+ {
+  "page": "inboxes/update-draft",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.drafts.update({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  draftId: 'c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32',\n  subject: 'Refund issued for order 1041',\n});"
+ },
+ {
+  "page": "inboxes/update-draft",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/drafts/c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"subject\": \"Refund issued for order 1041\"\n}'"
+ },
+ {
+  "page": "inboxes/update-inbox",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.update(\n  'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  { name: 'Customer Support', fromName: 'Ada from Support' },\n);"
+ },
+ {
+  "page": "inboxes/update-inbox",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Customer Support\",\n  \"from_name\": \"Ada from Support\"\n}'"
+ },
+ {
+  "page": "inboxes/update-label",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.labels.update({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  labelId: '7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34',\n  color: '#F76B15',\n});"
+ },
+ {
+  "page": "inboxes/update-label",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/labels/7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"color\": \"#F76B15\"\n}'"
+ },
+ {
+  "page": "inboxes/update-thread",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.inboxes.threads.update({\n  inboxId: 'b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1',\n  threadId: '4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12',\n  read: true,\n  folder: 'spam',\n});"
+ },
+ {
+  "page": "inboxes/update-thread",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/inboxes/b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1/threads/4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"read\": true,\n  \"folder\": \"spam\"\n}'"
+ },
+ {
+  "page": "logs/list-logs",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.logs.list();"
+ },
+ {
+  "page": "logs/list-logs",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/logs' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "logs/retrieve-log",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.logs.get(\n  '37e4414c-5e25-4dbc-a071-43552a4bd53b',\n);"
+ },
+ {
+  "page": "logs/retrieve-log",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/logs/37e4414c-5e25-4dbc-a071-43552a4bd53b' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "oauth/list-grants",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.oauthGrants.list();"
+ },
+ {
+  "page": "oauth/list-grants",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/oauth/grants' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "oauth/revoke-grant",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.oauthGrants.revoke(\n  '650e8400-e29b-41d4-a716-446655440001',\n);"
+ },
+ {
+  "page": "oauth/revoke-grant",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/oauth/grants/650e8400-e29b-41d4-a716-446655440001' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "oauth/token",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/oauth/token' \\\n     -H 'Content-Type: application/x-www-form-urlencoded' \\\n     -d 'grant_type=refresh_token&client_id=550e8400-e29b-41d4-a716-446655440000&refresh_token=JcL7aYfE7S9h3L4qv0o2e1w8m6n5b3x9RkP2tD4uV6Q'"
+ },
+ {
+  "page": "pagination",
+  "lang": "Node.js",
+  "code": "const resend = new Resend('re_xxxxxxxxx');\n\n// First page\nconst { data: firstPage } = await resend.contacts.list({ limit: 50 });\n\n// Second page (if has_more is true)\nif (firstPage.has_more) {\n  const lastId = firstPage.data[firstPage.data.length - 1].id;\n  const { data: secondPage } = await resend.contacts.list({\n    limit: 50,\n    after: lastId,\n  });\n}"
+ },
+ {
+  "page": "pagination",
+  "lang": "cURL",
+  "code": "# First page\ncurl -X GET 'https://api.resend.com/contacts?limit=50' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Second page\ncurl -X GET 'https://api.resend.com/contacts?limit=50&after=LAST_ID_FROM_PREVIOUS_PAGE' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "pagination",
+  "lang": "Node.js",
+  "code": "const resend = new Resend('re_xxxxxxxxx');\n\n// Start from a specific point and go backward\nconst page = await resend.contacts.list({\n  limit: 50,\n  before: 'some-contact-id',\n});\n\nif (page.data.has_more) {\n  const firstId = page.data.data[0].id;\n  const previousPage = await resend.contacts.list({\n    limit: 50,\n    before: firstId,\n  });\n}"
+ },
+ {
+  "page": "pagination",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/contacts?limit=50&before=some-contact-id' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/create-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.segments.create({\n  name: 'Registered Users',\n});"
+ },
+ {
+  "page": "segments/create-segment",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/segments' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Registered Users\"\n}'"
+ },
+ {
+  "page": "segments/delete-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.segments.remove(\n  '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n);"
+ },
+ {
+  "page": "segments/delete-segment",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/get-segment-metrics",
+  "lang": "Node.js",
+  "code": "> npm install resend@6.31.1-preview-headless-dashboard.0\n> ```\n\nContact counts for your account, optionally broken down by segment. Works\nacross your whole account by default, or scoped to specific segments via\n`segment_id`.\n\n> [!NOTE]\n>\n> Responses are cached for up to 15 minutes, so repeating the same request may\n> return slightly stale data within that window.\n\nAll parameters are optional. With none, the response covers your whole account,\nincludes every metric, and returns only `totals`. There's no date range, so\ncounts are a point-in-time snapshot rather than a historical window.\n\n## Query Parameters\n\nList-type query parameters below accept a comma-separated value, the\nparameter repeated (`segment_id=a&segment_id=b`), or a mix of\nboth.\n\nList of metrics to include in `totals` and `data`. Omit for all. See\n[Metrics](#metrics).\n\nList of dimensions to break `data` down by. Omit for only `totals`, with no\n`data`.\n\nPossible values:\n\n* `segment`: one row per segment, using its current contact counts.\n\nList of segment IDs. Narrows `totals` (and `data`, when requested) to just\nthese segments, without double-counting contacts that belong to more than one.\n\n> [!NOTE]\n>\n> When `dimensions` includes `segment`, `data` is ordered by each segment's\n> creation date, newest first.\n\n## Metrics\n\nEvery metric counts contacts, not emails.\n\n| Metric | Description |\n| - | - |\n| `all_contacts` | Every contact. Sum of `subscribers` and `unsubscribers`. |\n| `subscribers` | Contacts with `unsubscribed` set to `false`. |\n| `unsubscribers` | Contacts with `unsubscribed` set to `true`. |\n\n> [!NOTE]\n>\n> `totals` counts each contact once. `data` counts a contact in every segment it\n> belongs to.\n"
+ },
+ {
+  "page": "segments/get-segment-metrics",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/segments/metrics?dimensions=segment&metrics=all_contacts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/get-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.segments.get(\n  '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n);"
+ },
+ {
+  "page": "segments/get-segment",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/list-segment-contacts",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.contacts.list({\n  segmentId: '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n});"
+ },
+ {
+  "page": "segments/list-segment-contacts",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf/contacts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/list-segments",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.segments.list();"
+ },
+ {
+  "page": "segments/list-segments",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/segments' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "segments/update-segment",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.segments.update(\n  '78261eea-8f8b-4381-83c6-79fa7120f1cf',\n  {\n    name: 'Active Users',\n  },\n);"
+ },
+ {
+  "page": "segments/update-segment",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/segments/78261eea-8f8b-4381-83c6-79fa7120f1cf' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Active Users\"\n}'"
+ },
+ {
+  "page": "suppressions/add-batch-suppressions",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.batch.add({\n  emails: ['steve.wozniak@example.com', 'susan.kare@example.com'],\n});"
+ },
+ {
+  "page": "suppressions/add-batch-suppressions",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/suppressions/batch/add' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"emails\": [\"steve.wozniak@example.com\", \"susan.kare@example.com\"]\n}'"
+ },
+ {
+  "page": "suppressions/add-suppression",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.add({\n  email: 'steve.wozniak@example.com',\n});"
+ },
+ {
+  "page": "suppressions/add-suppression",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/suppressions' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"email\": \"steve.wozniak@example.com\"\n}'"
+ },
+ {
+  "page": "suppressions/get-suppression",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.get(\n  'e169aa45-1ecf-4183-9955-b1499d5701d3', // or: 'steve.wozniak@example.com'\n);"
+ },
+ {
+  "page": "suppressions/get-suppression",
+  "lang": "cURL",
+  "code": "# Retrieve by suppression id\ncurl -X GET 'https://api.resend.com/suppressions/e169aa45-1ecf-4183-9955-b1499d5701d3' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Retrieve by email\ncurl -X GET 'https://api.resend.com/suppressions/steve.wozniak@example.com' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "suppressions/list-suppressions",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.list();"
+ },
+ {
+  "page": "suppressions/list-suppressions",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/suppressions' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "suppressions/remove-batch-suppressions",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.batch.remove({\n  ids: ['e169aa45-1ecf-4183-9955-b1499d5701d3'],\n  // or: emails: ['steve.wozniak@example.com', 'susan.kare@example.com'],\n});"
+ },
+ {
+  "page": "suppressions/remove-batch-suppressions",
+  "lang": "cURL",
+  "code": "# Remove by suppression ids\ncurl -X POST 'https://api.resend.com/suppressions/batch/remove' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"ids\": [\"e169aa45-1ecf-4183-9955-b1499d5701d3\"]\n}'\n\n# Remove by emails\ncurl -X POST 'https://api.resend.com/suppressions/batch/remove' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"emails\": [\"steve.wozniak@example.com\", \"susan.kare@example.com\"]\n}'"
+ },
+ {
+  "page": "suppressions/remove-suppression",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.suppressions.remove(\n  'e169aa45-1ecf-4183-9955-b1499d5701d3', // or: 'steve.wozniak@example.com'\n);"
+ },
+ {
+  "page": "suppressions/remove-suppression",
+  "lang": "cURL",
+  "code": "# Remove by suppression id\ncurl -X DELETE 'https://api.resend.com/suppressions/e169aa45-1ecf-4183-9955-b1499d5701d3' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'\n\n# Remove by email\ncurl -X DELETE 'https://api.resend.com/suppressions/steve.wozniak@example.com' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "templates/create-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.create({\n  name: 'order-confirmation',\n  html: '<p>Name: {{{PRODUCT}}}</p><p>Total: {{{PRICE}}}</p>',\n  variables: [\n    {\n      key: 'PRODUCT',\n      type: 'string',\n      fallbackValue: 'item',\n    },\n    {\n      key: 'PRICE',\n      type: 'number',\n      fallbackValue: 25,\n    },\n  ],\n});\n\n// Or create and publish a template in one step\nconst { data: published, error: publishError } = await resend.templates\n  .create({\n    name: 'order-confirmation',\n    html: '<p>Thanks for your order!</p>',\n  })\n  .publish();"
+ },
+ {
+  "page": "templates/create-template",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/templates' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"order-confirmation\",\n  \"html\": \"<p>Name: {{{PRODUCT}}}</p><p>Total: {{{PRICE}}}</p>\",\n  \"variables\": [\n    {\n      \"key\": \"PRODUCT\",\n      \"type\": \"string\",\n      \"fallback_value\": \"item\"\n    },\n    {\n      \"key\": \"PRICE\",\n      \"type\": \"number\",\n      \"fallback_value\": 25\n    }\n  ]\n}'"
+ },
+ {
+  "page": "templates/delete-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.remove(\n  '34a080c9-b17d-4187-ad80-5af20266e535',\n);"
+ },
+ {
+  "page": "templates/delete-template",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/templates/34a080c9-b17d-4187-ad80-5af20266e535' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "templates/duplicate-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.duplicate(\n  '34a080c9-b17d-4187-ad80-5af20266e535',\n);"
+ },
+ {
+  "page": "templates/duplicate-template",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/templates/34a080c9-b17d-4187-ad80-5af20266e535/duplicate' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "templates/get-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.get(\n  '34a080c9-b17d-4187-ad80-5af20266e535',\n);"
+ },
+ {
+  "page": "templates/get-template",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/templates/34a080c9-b17d-4187-ad80-5af20266e535' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "templates/list-templates",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.list({\n  limit: 2,\n  after: '34a080c9-b17d-4187-ad80-5af20266e535',\n});"
+ },
+ {
+  "page": "templates/list-templates",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/templates?limit=2&after=34a080c9-b17d-4187-ad80-5af20266e535' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "templates/publish-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.publish(\n  '34a080c9-b17d-4187-ad80-5af20266e535',\n);"
+ },
+ {
+  "page": "templates/publish-template",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/templates/34a080c9-b17d-4187-ad80-5af20266e535/publish' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json'"
+ },
+ {
+  "page": "templates/update-template",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.templates.update(\n  '34a080c9-b17d-4187-ad80-5af20266e535',\n  {\n    name: 'order-confirmation',\n    html: '<p>Total: {{{PRICE}}}</p><p>Name: {{{PRODUCT}}}</p>',\n  },\n);"
+ },
+ {
+  "page": "templates/update-template",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/templates/34a080c9-b17d-4187-ad80-5af20266e535' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"order-confirmation\",\n  \"html\": \"<p>Total: {{{PRICE}}}</p><p>Name: {{{PRODUCT}}}</p>\"\n}'"
+ },
+ {
+  "page": "topics/create-topic",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.topics.create({\n  name: 'Weekly Newsletter',\n  defaultSubscription: 'opt_in',\n});"
+ },
+ {
+  "page": "topics/create-topic",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Weekly Newsletter\",\n  \"default_subscription\": \"opt_in\"\n}'"
+ },
+ {
+  "page": "topics/delete-topic",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.topics.remove(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n);"
+ },
+ {
+  "page": "topics/delete-topic",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/topics/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "topics/get-topic",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.topics.get(\n  'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n);"
+ },
+ {
+  "page": "topics/get-topic",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/topics/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "topics/list-topics",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.topics.list();"
+ },
+ {
+  "page": "topics/list-topics",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/topics' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "topics/update-topic",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.topics.update({\n  id: 'b6d24b8e-af0b-4c3c-be0c-359bbd97381e',\n  name: 'Weekly Newsletter',\n  description: 'Weekly newsletter for our subscribers',\n});"
+ },
+ {
+  "page": "topics/update-topic",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/topics/b6d24b8e-af0b-4c3c-be0c-359bbd97381e' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d $'{\n  \"name\": \"Weekly Newsletter\",\n  \"description\": \"Weekly newsletter for our subscribers\"\n}'"
+ },
+ {
+  "page": "webhooks/create-webhook",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.create({\n  endpoint: 'https://example.com/handler',\n  events: ['email.sent'],\n});"
+ },
+ {
+  "page": "webhooks/create-webhook",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/webhooks' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"endpoint\": \"https://example.com/handler\",\n  \"events\": [\"email.sent\"]\n}'"
+ },
+ {
+  "page": "webhooks/delete-webhook",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.remove(\n  '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n);"
+ },
+ {
+  "page": "webhooks/delete-webhook",
+  "lang": "cURL",
+  "code": "curl -X DELETE 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/get-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.events.get({\n  eventId: 'msg_1srOrx2ZWZBpBUvZwXKQmoEYga2',\n  webhookId: '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n});"
+ },
+ {
+  "page": "webhooks/get-event",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0/events/msg_1srOrx2ZWZBpBUvZwXKQmoEYga2' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/get-webhook",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.get(\n  '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n);"
+ },
+ {
+  "page": "webhooks/get-webhook",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/list-event-attempts",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.events.attempts.list({\n  eventId: 'msg_1srOrx2ZWZBpBUvZwXKQmoEYga2',\n  webhookId: '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n});"
+ },
+ {
+  "page": "webhooks/list-event-attempts",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0/events/msg_1srOrx2ZWZBpBUvZwXKQmoEYga2/attempts' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/list-events",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.events.list({\n  webhookId: '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n});"
+ },
+ {
+  "page": "webhooks/list-events",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0/events' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/list-webhooks",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.list();"
+ },
+ {
+  "page": "webhooks/list-webhooks",
+  "lang": "cURL",
+  "code": "curl -X GET 'https://api.resend.com/webhooks' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/replay-event",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.events.replay({\n  eventId: 'msg_1srOrx2ZWZBpBUvZwXKQmoEYga2',\n  webhookId: '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n});"
+ },
+ {
+  "page": "webhooks/replay-event",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0/events/msg_1srOrx2ZWZBpBUvZwXKQmoEYga2/replay' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/rotate-signing-secret",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.rotateSigningSecret(\n  '4dd369bc-aa82-4ff3-97de-514ae3000ee0',\n);"
+ },
+ {
+  "page": "webhooks/rotate-signing-secret",
+  "lang": "cURL",
+  "code": "curl -X POST 'https://api.resend.com/webhooks/4dd369bc-aa82-4ff3-97de-514ae3000ee0/signing-secret/rotate' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx'"
+ },
+ {
+  "page": "webhooks/update-webhook",
+  "lang": "Node.js",
+  "code": "import { Resend } from 'resend';\n\nconst resend = new Resend('re_xxxxxxxxx');\n\nconst { data, error } = await resend.webhooks.update(\n  '430eed87-632a-4ea6-90db-0aace67ec228',\n  {\n    endpoint: 'https://new-webhook.example.com/handler',\n    events: ['email.sent', 'email.delivered'],\n    status: 'enabled',\n  },\n);"
+ },
+ {
+  "page": "webhooks/update-webhook",
+  "lang": "cURL",
+  "code": "curl -X PATCH 'https://api.resend.com/webhooks/430eed87-632a-4ea6-90db-0aace67ec228' \\\n     -H 'Authorization: Bearer re_xxxxxxxxx' \\\n     -H 'Content-Type: application/json' \\\n     -d '{\n  \"endpoint\": \"https://new-webhook.example.com/handler\",\n  \"events\": [\"email.sent\", \"email.delivered\"],\n  \"status\": \"enabled\"\n}'"
+ }
+]

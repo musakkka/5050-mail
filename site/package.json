@@ -1,0 +1,14 @@
+{
+  "name": "5050-mail-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page and documentation for 5050 Mail. Builds to static files in dist/ with plain Node, no dependencies.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build/build.mjs",
+    "dev": "node build/serve.mjs --watch",
+    "preview": "node build/serve.mjs"
+  }
+}

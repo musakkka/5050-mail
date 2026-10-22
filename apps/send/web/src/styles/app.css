@@ -1,0 +1,274 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --container-inbox: 105rem;
+  --text-2xs: .625rem;
+  --shadow-3xl: 0 0 60px 30px #f2f2f2;
+  --shadow-4xl: 2px 13px 68px 7px #0000001a;
+  --shadow-button: 0px 0px 4px #ffffff0f, 0px 1px 14px #ffffff1f, 0px 3px 32px #ffffff2e;
+  --animate-fade-in: fade-in .2s ease;
+  --animate-fade-out: fade-out .2s ease;
+  --animate-open-slide-up-fade: open-slide-up-fade .2s;
+  --animate-open-slide-down-fade: open-slide-down-fade .2s;
+  --animate-caret-blink: caret-blink 1.2s ease-out infinite;
+  --animate-ai-shimmer-text: ai-shimmer-text 2.5s linear infinite;
+  --color-red-500: #fb2c36;
+  --color-red-600: #e40014;
+  --color-orange-400: #ff8b1a;
+  --color-orange-500: #fe6e00;
+  --color-yellow-300: #ffe02a;
+  --color-yellow-500: #edb200;
+  --color-green-300: #7bf1a8;
+  --color-green-500: #00c758;
+  --color-blue-500: #3080ff;
+  --color-blue-600: #155dfc;
+  --color-violet-500: #8d54ff;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-300: #cad5e2;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5dc;
+  --color-gray-500: #6a7282;
+  --color-gray-600: #4a5565;
+  --color-background: var(--background);
+  --color-canvas: var(--canvas);
+  --color-slate-1: var(--slate-a1);
+  --color-slate-2: var(--slate-a2);
+  --color-slate-3: var(--slate-a3);
+  --color-slate-4: var(--slate-a4);
+  --color-slate-5: var(--slate-a5);
+  --color-slate-6: var(--slate-a6);
+  --color-slate-7: var(--slate-a7);
+  --color-slate-8: var(--slate-a8);
+  --color-slate-9: var(--slate-a9);
+  --color-slate-10: var(--slate-a10);
+  --color-slate-11: var(--slate-a11);
+  --color-slate-12: var(--slate-a12);
+  --color-gray-1: var(--gray-1);
+  --color-gray-2: var(--gray-2);
+  --color-gray-3: var(--gray-3);
+  --color-gray-4: var(--gray-4);
+  --color-gray-5: var(--gray-5);
+  --color-gray-6: var(--gray-6);
+  --color-gray-7: var(--gray-7);
+  --color-gray-8: var(--gray-8);
+  --color-gray-9: var(--gray-9);
+  --color-gray-10: var(--gray-10);
+  --color-gray-11: var(--gray-11);
+  --color-gray-12: var(--gray-12);
+  --color-light-gray-a2: #ebebeb;
+  --color-light-gray-a3: #d9d9d9;
+  --color-light-gray-1: #f0f0f0;
+  --color-light-gray-2: #eee;
+  --color-light-gray-3: #d7d7d7;
+  --color-light-gray-4: #bebebe;
+  --color-light-gray-5: #989898;
+  --color-light-gray-7: #656565;
+  --color-light-gray-11: #0d0d0d;
+  --color-light-gray-12: #191919;
+  --color-gray-a1: var(--gray-a1);
+  --color-gray-a2: var(--gray-a2);
+  --color-gray-a3: var(--gray-a3);
+  --color-gray-a4: var(--gray-a4);
+  --color-gray-a5: var(--gray-a5);
+  --color-gray-a8: var(--gray-a8);
+  --color-gray-a9: var(--gray-a9);
+  --color-gray-a10: var(--gray-a10);
+  --color-gray-a11: var(--gray-a11);
+  --color-gray-a12: var(--gray-a12);
+  --color-black-2: var(--black-a2);
+  --color-black-3: var(--black-a3);
+  --color-black-5: var(--black-a5);
+  --color-black-6: var(--black-a6);
+  --color-black-8: var(--black-a8);
+  --color-black-9: var(--black-a9);
+  --color-black-12: var(--black-a12);
+  --color-light-slate-3: #0000330f;
+  --color-light-slate-7: #00062e32;
+  --color-violet-3: var(--violet-a3);
+  --color-violet-4: var(--violet-a4);
+  --color-violet-6: var(--violet-a6);
+  --color-violet-7: var(--violet-a7);
+  --color-violet-8: var(--violet-a8);
+  --color-violet-9: var(--violet-a9);
+  --color-violet-10: var(--violet-a10);
+  --color-violet-11: var(--violet-a11);
+  --color-sand-3: var(--sand-a3);
+  --color-sand-4: var(--sand-a4);
+  --color-sand-9: var(--sand-a9);
+  --color-sand-10: var(--sand-a10);
+  --color-sand-11: var(--sand-a11);
+  --color-green-1: var(--green-a1);
+  --color-green-3: var(--green-a3);
+  --color-green-4: var(--green-a4);
+  --color-green-5: var(--green-a5);
+  --color-green-6: var(--green-a6);
+  --color-green-7: var(--green-a7);
+  --color-green-8: var(--green-a8);
+  --color-green-9: var(--green-a9);
+  --color-green-10: var(--green-a10);
+  --color-green-11: var(--green-a11);
+  --color-green-12: var(--green-a12);
+  --color-red-1: var(--red-a1);
+  --color-red-3: var(--red-a3);
+  --color-red-4: var(--red-a4);
+  --color-red-5: var(--red-a5);
+  --color-red-6: var(--red-a6);
+  --color-red-7: var(--red-a7);
+  --color-red-8: var(--red-a8);
+  --color-red-9: var(--red-a9);
+  --color-red-10: var(--red-a10);
+  --color-red-11: var(--red-a11);
+  --color-red-12: var(--red-a12);
+  --color-yellow-1: var(--amber-a1);
+  --color-yellow-3: var(--amber-a3);
+  --color-yellow-4: var(--amber-a4);
+  --color-yellow-5: var(--amber-a5);
+  --color-yellow-6: var(--amber-a6);
+  --color-yellow-7: var(--amber-a7);
+  --color-yellow-9: var(--amber-a9);
+  --color-yellow-10: var(--amber-a10);
+  --color-yellow-11: var(--amber-a11);
+  --color-yellow-12: var(--amber-a12);
+  --color-blue-3: var(--blue-a3);
+  --color-blue-4: var(--blue-a4);
+  --color-blue-5: var(--blue-a5);
+  --color-blue-7: var(--blue-a7);
+  --color-blue-8: var(--blue-a8);
+  --color-blue-9: var(--blue-a9);
+  --color-blue-10: var(--blue-a10);
+  --color-blue-11: var(--blue-a11);
+  --color-blue-12: var(--blue-a12);
+  --color-orange-3: var(--orange-a3);
+  --color-orange-4: var(--orange-a4);
+  --color-orange-6: var(--orange-a6);
+  --color-orange-7: var(--orange-a7);
+  --color-orange-8: var(--orange-a8);
+  --color-orange-9: var(--orange-a9);
+  --color-orange-10: var(--orange-a10);
+  --color-orange-11: var(--orange-a11);
+  --color-label-cyan-3: var(--cyan-a3);
+  --color-label-cyan-9: var(--cyan-a9);
+  --color-label-cyan-11: var(--cyan-a11);
+  --color-label-teal-3: var(--teal-a3);
+  --color-label-teal-9: var(--teal-a9);
+  --color-label-teal-11: var(--teal-a11);
+  --color-label-grass-3: var(--grass-a3);
+  --color-label-grass-9: var(--grass-a9);
+  --color-label-grass-11: var(--grass-a11);
+  --color-label-lime-3: var(--lime-a3);
+  --color-label-lime-9: var(--lime-a9);
+  --color-label-lime-11: var(--lime-a11);
+  --color-label-yellow-3: var(--yellow-a3);
+  --color-label-yellow-9: var(--yellow-a9);
+  --color-label-yellow-11: var(--yellow-a11);
+  --color-label-orange-3: var(--orange-a3);
+  --color-label-orange-9: var(--orange-a9);
+  --color-label-orange-11: var(--orange-a11);
+  --color-label-iris-3: var(--iris-a3);
+  --color-label-iris-9: var(--iris-a9);
+  --color-label-iris-11: var(--iris-a11);
+  --color-label-plum-3: var(--plum-a3);
+  --color-label-plum-9: var(--plum-a9);
+  --color-label-plum-11: var(--plum-a11);
+  --color-label-crimson-3: var(--crimson-a3);
+  --color-label-crimson-9: var(--crimson-a9);
+  --color-label-crimson-11: var(--crimson-a11);
+  --color-label-bronze-3: var(--bronze-a4);
+  --color-label-bronze-9: var(--bronze-a9);
+  --color-label-bronze-11: var(--bronze-a11);
+  --color-label-mauve-3: var(--mauve-a4);
+  --color-label-mauve-9: var(--mauve-a9);
+  --color-label-mauve-11: var(--mauve-a11);
+}
+
+/* Semantic utilities (same names as the reference design system). */
+@utility bg-accent { background-color: var(--bg-accent); }
+@utility bg-accent-hover { background-color: var(--bg-accent-hover); }
+@utility bg-elevated { background-color: var(--gray-2); }
+@utility bg-error { background-color: var(--red-a3); }
+@utility bg-error-hover { background-color: var(--red-a5); }
+@utility bg-info { background-color: var(--blue-a3); }
+@utility bg-interactive { background-color: var(--gray-a2); }
+@utility bg-interactive-hover { background-color: var(--gray-a3); }
+@utility bg-overlay { background-color: var(--bg-overlay); }
+@utility bg-subtle { background-color: var(--gray-1); }
+@utility bg-success { background-color: var(--green-a3); }
+@utility bg-warning { background-color: var(--amber-a3); }
+@utility border-default { border-color: var(--gray-3); }
+@utility border-error { border-color: var(--red-a6); }
+@utility border-error-subtle { border-color: var(--red-a4); }
+@utility border-info-subtle { border-color: var(--blue-a4); }
+@utility border-interactive { border-color: var(--gray-a3); }
+@utility border-link { border-color: var(--gray-3); }
+@utility border-link-hover { border-color: var(--blue-a9); }
+@utility border-subtle { border-color: var(--gray-2); }
+@utility border-success { border-color: var(--green-a6); }
+@utility border-success-subtle { border-color: var(--green-a4); }
+@utility border-warning { border-color: var(--amber-a6); }
+@utility border-warning-subtle { border-color: var(--amber-a4); }
+@utility ring-error { --tw-ring-color: var(--red-a7); }
+@utility ring-focus { --tw-ring-color: var(--gray-a2); }
+@utility ring-link { --tw-ring-color: var(--blue-a7); }
+@utility ring-accent { --tw-ring-color: var(--ring-accent); }
+@utility text-default { color: var(--gray-11); }
+@utility text-emphasis { color: var(--gray-12); }
+@utility text-error { color: var(--red-a11); }
+@utility text-info { color: var(--blue-a11); }
+@utility text-link { color: var(--blue-a9); }
+@utility text-muted { color: var(--gray-8); }
+@utility text-on-accent { color: var(--text-on-accent); }
+@utility text-placeholder { color: var(--text-placeholder); }
+@utility text-success { color: var(--green-a11); }
+@utility text-warning { color: var(--amber-a11); }
+@utility bg-gradient-fade { background-image: linear-gradient(90deg, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 40%); }
+@utility interpolate-size { interpolate-size: allow-keywords; }
+@utility effect-font-styling { font-feature-settings: "ss01", "ss04", "ss05", "ss11"; }
+@utility steps-gradient { background: linear-gradient(180deg, transparent 0%, var(--slate-a6) 10%, var(--slate-a6) 90%, transparent 100%); }
+@utility scroll-shadow-line-y { animation: scroll-shadow-line-y linear both; animation-timeline: scroll(self); }
+@utility scroll-fade-x { animation: scroll-fade-x linear both; animation-timeline: scroll(self inline); }
+@utility no-spinner {
+  appearance: textfield;
+  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button { appearance: none; margin: 0; }
+}
+
+@keyframes scroll-shadow-line-y {
+  0% { box-shadow: 0 -1px 0 0 transparent, 0 1px 0 0 var(--scroll-shadow-line-color); }
+  0.01%, 99.99% { box-shadow: 0 -1px 0 0 var(--scroll-shadow-line-color), 0 1px 0 0 var(--scroll-shadow-line-color); }
+  100% { box-shadow: 0 -1px 0 0 var(--scroll-shadow-line-color), 0 1px 0 0 transparent; }
+}
+@keyframes scroll-fade-x {
+  0% { mask-image: linear-gradient(90deg, #000 calc(100% - 24px), #0000); }
+  0.01%, 99.99% { mask-image: linear-gradient(90deg, #0000, #000 24px, #000 calc(100% - 24px), #0000); }
+  100% { mask-image: linear-gradient(90deg, #0000, #000 24px); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes caret-blink { 0%, 70%, 100% { opacity: 1; } 20%, 50% { opacity: 0; } }
+
+@layer base {
+  * { scrollbar-width: thin; scrollbar-color: gray transparent; }
+  body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; text-size-adjust: none; }
+  .font-display { font-feature-settings: "ss01", "ss03", "ss04", "ss05"; }
+  .font-sans.effect-font-styling { font-feature-settings: "ss01", "ss04", "ss11"; }
+  #root { isolation: isolate; }
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+}
+
+/* Shiki dual theme (light/dark via CSS variables). */
+.shiki, .shiki span { color: var(--shiki-light); }
+.dark .shiki, .dark .shiki span { color: var(--shiki-dark); }
+.shiki { background: transparent !important; }
+
+/* Unlayered on purpose (beats the z-* utilities): every portal child shares one
+   stacking level so DOM order decides, and Base UI's inert outside-click layer can
+   never sit above the popup that owns it. */
+[data-base-ui-portal] { position: relative; }
+[data-base-ui-portal] > * { z-index: 1000; }

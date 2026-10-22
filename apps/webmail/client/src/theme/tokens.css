@@ -1,0 +1,206 @@
+/*
+ * 5050 Mail design tokens — docs/gmail-spec/01-tokens.md.
+ * Theme is selected by [data-theme] on <html>: "light" | "dark" | "system".
+ * Density by [data-density]: "default" | "comfortable" | "compact".
+ */
+:root {
+  /* GM3 system palette (light) */
+  --md-primary: #0b57d0;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #d3e3fd;
+  --md-on-primary-container: #0842a0;
+  --md-secondary: #00639b;
+  --md-secondary-container: #c2e7ff;
+  --md-on-secondary-container: #001d35;
+  --md-surface: #ffffff;
+  --md-surface-bright: #ffffff;
+  --md-surface-container-lowest: #ffffff;
+  --md-surface-container-low: #f8fafd;
+  --md-surface-container: #f0f4f9;
+  --md-surface-container-high: #e9eef6;
+  --md-surface-container-highest: #dde3ea;
+  --md-on-surface: #1f1f1f;
+  --md-on-surface-variant: #444746;
+  --md-outline: #747775;
+  --md-outline-variant: #c4c7c5;
+  --md-inverse-surface: #303030;
+  --md-inverse-on-surface: #f2f2f2;
+  --md-inverse-primary: #a8c7fa;
+  --md-error: #b3261e;
+  --md-error-container: #f9dedc;
+  --md-on-error-container: #8c1d18;
+
+  /* App semantic tokens */
+  --app-bg: #f6f8fc;
+  --card-bg: #ffffff;
+  --search-bg: #eaf1fb;
+  --search-bg-focus: #ffffff;
+  --compose-btn-bg: #c2e7ff;
+  --compose-btn-fg: #001d35;
+  --nav-selected-bg: #d3e3fd;
+  --nav-selected-fg: #001d35;
+  --nav-hover-bg: rgba(31, 31, 31, 0.08);
+  --row-unread-bg: #ffffff;
+  --row-read-bg: #f2f6fc;
+  --row-selected-bg: #c2e7ff;
+  --row-divider: rgba(100, 121, 143, 0.122);
+  --row-hover-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --text-primary: #1f1f1f;
+  --text-secondary: #444746;
+  --text-tertiary: #5e5e5e;
+  --icon: #444746;
+  --icon-active: #1f1f1f;
+  --link: #0b57d0;
+  --star: #f4b400;
+  --important-marker: #f4b400;
+  --tab-active: #0b57d0;
+  --compose-header-bg: #f2f6fc;
+  --compose-header-fg: #041e49;
+  --send-bg: #0b57d0;
+  --send-fg: #ffffff;
+  --snackbar-bg: #303030;
+  --snackbar-fg: #f2f2f2;
+  --snackbar-action: #a8c7fa;
+  --tooltip-bg: rgba(48, 48, 48, 0.92);
+  --tooltip-fg: #f2f2f2;
+  --scrim: rgba(0, 0, 0, 0.32);
+  --focus-ring: #0b57d0;
+  --quoted-toggle-bg: #e8eaed;
+  --message-body-fg: #222222;
+  --draft-red: #c5221f;
+  --state-hover: rgba(31, 31, 31, 0.08);
+  --state-focus: rgba(31, 31, 31, 0.1);
+  --state-pressed: rgba(31, 31, 31, 0.1);
+  --label-default-bg: #dddddd;
+  --label-default-fg: #666666;
+  --chip-bg: #f0f4f9;
+
+  /* 5050 brand (brand kit inks; used only where Gmail shows its own brand) */
+  --brand-lime: #b5ed13;
+  --brand-aqua: #16c8f4;
+  --brand-aqua-blend: multiply;
+  --brand-ink: #1c1a24;
+
+  /* Elevation */
+  --elev-1: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --elev-2: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  --elev-3: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+  --elev-4: 0 2px 3px 0 rgba(60, 64, 67, 0.3), 0 6px 10px 4px rgba(60, 64, 67, 0.15);
+
+  /* Typography */
+  --font-ui: 'Google Sans Flex Variable', 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif;
+  --font-text: 'Google Sans Flex Variable', 'Google Sans Flex', Roboto, Arial, sans-serif;
+  --font-body: Arial, Helvetica, sans-serif;
+  --font-mono: 'Google Sans Code', 'Roboto Mono', ui-monospace, monospace;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --dur-short: 150ms;
+  --dur-medium: 225ms;
+  --dur-long: 300ms;
+
+  /* Layout */
+  --topbar-h: 64px;
+  --nav-w: 256px;
+  --nav-w-collapsed: 72px;
+  --sidepanel-w: 56px;
+  --card-radius: 16px;
+  --row-h: 40px;
+  --row-font: 14px;
+
+  color-scheme: light;
+}
+
+[data-density='comfortable'] {
+  --row-h: 40px;
+}
+[data-density='compact'] {
+  --row-h: 32px;
+}
+
+/* Dark palette. "System" theme is resolved to light/dark in JS (theme/theme.ts). */
+:root[data-theme='dark'] {
+  --md-primary: #a8c7fa;
+  --md-on-primary: #062e6f;
+  --md-primary-container: #0842a0;
+  --md-on-primary-container: #d3e3fd;
+  --md-secondary: #7fcfff;
+  --md-secondary-container: #004a77;
+  --md-on-secondary-container: #c2e7ff;
+  --md-surface: #131314;
+  --md-surface-bright: #37393b;
+  --md-surface-container-lowest: #0e0e0e;
+  --md-surface-container-low: #1b1b1b;
+  --md-surface-container: #1e1f20;
+  --md-surface-container-high: #282a2c;
+  --md-surface-container-highest: #333537;
+  --md-on-surface: #e3e3e3;
+  --md-on-surface-variant: #c4c7c5;
+  --md-outline: #8e918f;
+  --md-outline-variant: #444746;
+  --md-inverse-surface: #e3e3e3;
+  --md-inverse-on-surface: #303030;
+  --md-inverse-primary: #0b57d0;
+  --md-error: #f2b8b5;
+  --md-error-container: #8c1d18;
+  --md-on-error-container: #f9dedc;
+
+  --app-bg: #1b1b1b;
+  --card-bg: #131314;
+  --search-bg: #282a2c;
+  --search-bg-focus: #333537;
+  --compose-btn-bg: #004a77;
+  --compose-btn-fg: #c2e7ff;
+  --nav-selected-bg: #004a77;
+  --nav-selected-fg: #c2e7ff;
+  --nav-hover-bg: rgba(227, 227, 227, 0.08);
+  --row-unread-bg: #131314;
+  --row-read-bg: rgba(255, 255, 255, 0.04);
+  --row-selected-bg: #004a77;
+  --row-divider: rgba(255, 255, 255, 0.08);
+  --row-hover-shadow: inset 1px 0 0 #3c4043, inset -1px 0 0 #3c4043, 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 1px rgba(0, 0, 0, 0.3);
+  --text-primary: #e3e3e3;
+  --text-secondary: #c4c7c5;
+  --text-tertiary: #a8abaa;
+  --icon: #c4c7c5;
+  --icon-active: #e3e3e3;
+  --link: #a8c7fa;
+  --star: #fdd663;
+  --important-marker: #fdd663;
+  --tab-active: #a8c7fa;
+  --compose-header-bg: #282a2c;
+  --compose-header-fg: #e3e3e3;
+  --send-bg: #a8c7fa;
+  --send-fg: #062e6f;
+  --snackbar-bg: #e3e3e3;
+  --snackbar-fg: #303030;
+  --snackbar-action: #0b57d0;
+  --tooltip-bg: rgba(227, 227, 227, 0.95);
+  --tooltip-fg: #303030;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --focus-ring: #a8c7fa;
+  --quoted-toggle-bg: #5f6368;
+  --message-body-fg: #e3e3e3;
+  --draft-red: #f28b82;
+  --state-hover: rgba(227, 227, 227, 0.08);
+  --state-focus: rgba(227, 227, 227, 0.1);
+  --state-pressed: rgba(227, 227, 227, 0.1);
+  --label-default-bg: #444746;
+  --label-default-fg: #e3e3e3;
+  --chip-bg: #282a2c;
+
+  --brand-lime: #c4f53a;
+  --brand-aqua: #3fd6fa;
+  --brand-aqua-blend: screen;
+  --brand-ink: #f1ebdd;
+
+  --elev-1: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 1px rgba(0, 0, 0, 0.3);
+  --elev-2: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 2px 6px 2px rgba(0, 0, 0, 0.3);
+  --elev-3: 0 1px 3px 0 rgba(0, 0, 0, 0.6), 0 4px 8px 3px rgba(0, 0, 0, 0.3);
+  --elev-4: 0 2px 3px 0 rgba(0, 0, 0, 0.6), 0 6px 10px 4px rgba(0, 0, 0, 0.3);
+
+  color-scheme: dark;
+}

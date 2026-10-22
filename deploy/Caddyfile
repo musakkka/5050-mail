@@ -1,0 +1,66 @@
+# 5050 Mail edge: automatic HTTPS for the webmail, the Send dashboard and the Send API.
+# Hostnames come from .env (MAIL_HOSTNAME, SEND_HOST, API_HOST). CADDY_GLOBAL_OPTIONS
+# can hold extra global options, e.g. `local_certs` for a test domain (install.sh --tls internal).
+{
+	email {$ACME_EMAIL}
+	{$CADDY_GLOBAL_OPTIONS}
+	servers {
+		# Clients can't spoof their IP through these; Caddy sets X-Forwarded-For itself.
+		client_ip_headers X-Forwarded-For
+	}
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	request_body {
+		max_size 64MB
+	}
+}
+
+(upstream) {
+	# Only Caddy decides the client IP the apps see.
+	header_up -CF-Connecting-IP
+	header_up -X-Real-IP
+}
+
+# Webmail + admin console (BFF proxies JMAP to Stalwart). Also the SMTP/IMAP hostname,
+# so this certificate is the one 5050 Send's SMTP relay uses.
+{$MAIL_HOSTNAME} {
+	import common
+	reverse_proxy webmail:3000 {
+		import upstream
+		flush_interval -1
+	}
+}
+
+# Port 80 for the mail host: Stalwart's own HTTP-01 challenges (its certificate for
+# SMTP/IMAP), everything else to HTTPS. Caddy still answers its own challenges first.
+http://{$MAIL_HOSTNAME} {
+	handle /.well-known/acme-challenge/* {
+		reverse_proxy stalwart:8080
+	}
+	handle {
+		redir https://{host}{uri} permanent
+	}
+}
+
+# 5050 Send dashboard
+{$SEND_HOST} {
+	import common
+	reverse_proxy send-web:3000 {
+		import upstream
+	}
+}
+
+# 5050 Send API (Resend-compatible)
+{$API_HOST} {
+	import common
+	reverse_proxy send-web:3000 {
+		import upstream
+	}
+}

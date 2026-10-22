@@ -1,0 +1,56 @@
+{
+  "name": "5050-mail-webmail",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n bff,vite -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "tsx watch server/src/index.ts",
+    "dev:client": "vite",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "tsc -p server/tsconfig.json",
+    "start": "node dist/server/index.js",
+    "typecheck": "tsc -p client/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit && tsc -p tsconfig.tools.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "seed": "tsx scripts/seed.ts",
+    "screenshots": "tsx scripts/screenshots.ts",
+    "screenshots:admin": "tsx scripts/admin-screenshots.ts",
+    "brand": "tsx scripts/brand-assets.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/google-sans-flex": "^5.3.2",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/roboto": "^5.3.0",
+    "@material-symbols/svg-400": "^0.48.1",
+    "@playwright/test": "^1.64.1",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-virtual": "^3.14.21",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "dompurify": "^3.4.17",
+    "jsdom": "^29.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.4",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
+    "zustand": "^5.0.15"
+  }
+}

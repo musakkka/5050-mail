@@ -1,0 +1,9 @@
+{
+  "name": "worker_webhooks",
+  "emails_sent": 157,
+  "emails_per_sec": 5.2,
+  "webhook_deliveries": 328,
+  "webhooks_per_sec": 10.9,
+  "seconds": 30.0,
+  "backlog_end": 6210
+}

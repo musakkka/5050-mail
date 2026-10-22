@@ -1,0 +1,1724 @@
+{
+ "api-keys__create-api-key": {
+  "id": "dacf4072-4119-4d88-932f-6202748ac7c8",
+  "object": "api_key",
+  "token": "re_123456789"
+ },
+ "api-keys__delete-api-key": {
+  "object": "api_key",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+  "deleted": true
+ },
+ "api-keys__list-api-keys": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "91f3200a-df72-4654-b0cd-f202395f5354",
+    "name": "Production",
+    "created_at": "2026-04-08 00:11:13.110779+00",
+    "last_used_at": "2026-11-01 17:09:51.813959+00"
+   }
+  ]
+ },
+ "api-keys__update-api-key": {
+  "object": "api_key",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "automations__create-automation": {
+  "object": "automation",
+  "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd"
+ },
+ "automations__delete-automation": {
+  "object": "automation",
+  "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd",
+  "deleted": true
+ },
+ "automations__duplicate-automation": {
+  "object": "automation",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3"
+ },
+ "automations__get-automation-run": {
+  "object": "automation_run",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "completed",
+  "started_at": "2026-10-01 12:00:00.000000+00",
+  "completed_at": "2026-10-01 12:05:00.000000+00",
+  "created_at": "2026-10-01 12:00:00.000000+00",
+  "steps": [
+   {
+    "key": "start",
+    "type": "trigger",
+    "status": "completed",
+    "started_at": "2026-10-01 12:00:00.000000+00",
+    "completed_at": "2026-10-01 12:00:01.000000+00",
+    "output": null,
+    "error": null,
+    "created_at": "2026-10-01 12:00:00.000000+00"
+   },
+   {
+    "key": "welcome",
+    "type": "send_email",
+    "status": "completed",
+    "started_at": "2026-10-01 12:00:01.000000+00",
+    "completed_at": "2026-10-01 12:00:02.000000+00",
+    "output": null,
+    "error": null,
+    "created_at": "2026-10-01 12:00:01.000000+00"
+   }
+  ]
+ },
+ "automations__get-automation": {
+  "object": "automation",
+  "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd",
+  "name": "Welcome series",
+  "status": "disabled",
+  "created_at": "2026-10-01 12:00:00.000000+00",
+  "updated_at": "2026-10-01 12:00:00.000000+00",
+  "steps": [
+   {
+    "key": "start",
+    "type": "trigger",
+    "config": {
+     "event_name": "user.created"
+    }
+   },
+   {
+    "key": "welcome",
+    "type": "send_email",
+    "config": {
+     "template": {
+      "id": "34a080c9-b17d-4187-ad80-5af20266e535"
+     }
+    }
+   }
+  ],
+  "connections": [
+   {
+    "from": "start",
+    "to": "welcome",
+    "type": "default"
+   }
+  ]
+ },
+ "automations__list-automation-runs": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "status": "completed",
+    "started_at": "2026-10-01 12:00:00.000000+00",
+    "completed_at": "2026-10-01 12:05:00.000000+00",
+    "created_at": "2026-10-01 12:00:00.000000+00"
+   },
+   {
+    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "status": "running",
+    "started_at": "2026-10-02 08:30:00.000000+00",
+    "completed_at": null,
+    "created_at": "2026-10-02 08:30:00.000000+00"
+   }
+  ]
+ },
+ "automations__list-automations": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd",
+    "name": "Welcome series",
+    "status": "enabled",
+    "created_at": "2026-10-01 12:00:00.000000+00",
+    "updated_at": "2026-10-01 12:00:00.000000+00"
+   },
+   {
+    "id": "662892b2-4270-4130-a186-33a19752319d",
+    "name": "Re-engagement",
+    "status": "disabled",
+    "created_at": "2026-09-15 08:30:00.000000+00",
+    "updated_at": "2026-09-20 14:00:00.000000+00"
+   }
+  ]
+ },
+ "automations__stop-automation": {
+  "object": "automation",
+  "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd",
+  "status": "disabled"
+ },
+ "automations__update-automation": {
+  "object": "automation",
+  "id": "c9b16d4f-ba6c-4e2e-b044-6bf4404e57fd"
+ },
+ "broadcasts__cancel-broadcast": {
+  "object": "broadcast",
+  "id": "559ac32e-9ef5-46fb-82a1-b76b840c0f7b"
+ },
+ "broadcasts__create-broadcast": {
+  "object": "broadcast",
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "broadcasts__delete-broadcast": {
+  "object": "broadcast",
+  "id": "559ac32e-9ef5-46fb-82a1-b76b840c0f7b",
+  "deleted": true
+ },
+ "broadcasts__duplicate-broadcast": {
+  "object": "broadcast",
+  "id": "1f85ae38-f5b9-4c1f-8766-667a53970fea"
+ },
+ "broadcasts__get-broadcast": {
+  "object": "broadcast",
+  "id": "559ac32e-9ef5-46fb-82a1-b76b840c0f7b",
+  "name": "Announcements",
+  "audience_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "segment_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "from": "Acme <onboarding@resend.dev>",
+  "subject": "hello world",
+  "reply_to": null,
+  "preview_text": "Check out our latest announcements",
+  "html": "<p>Hello {{{contact.first_name|there}}}!</p>",
+  "text": "Hello {{{contact.first_name|there}}}!",
+  "status": "draft",
+  "created_at": "2026-12-01 19:32:22.980+00",
+  "scheduled_at": null,
+  "sent_at": null,
+  "topic_id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "broadcasts__list-broadcast-clicked-links": {
+  "object": "list",
+  "has_more": true,
+  "data": [
+   {
+    "id": "b2Zmc2V0OjA",
+    "url": "https://resend.com/pricing",
+    "clicks": 42,
+    "unique_clicks": 30
+   },
+   {
+    "id": "b2Zmc2V0OjE",
+    "url": "https://resend.com/docs",
+    "clicks": 17,
+    "unique_clicks": 15
+   }
+  ]
+ },
+ "broadcasts__list-broadcast-recipients": {
+  "object": "list",
+  "has_more": true,
+  "data": [
+   {
+    "id": "b2Zmc2V0OjA",
+    "contact_id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "email": "carter@example.com",
+    "count": 3,
+    "clicked_links": [
+     {
+      "url": "https://resend.com/pricing",
+      "clicks": 2
+     },
+     {
+      "url": "https://resend.com/docs",
+      "clicks": 1
+     }
+    ]
+   },
+   {
+    "id": "b2Zmc2V0OjE",
+    "contact_id": null,
+    "email": "dana@example.com",
+    "count": 1,
+    "clicked_links": [
+     {
+      "url": "https://resend.com/pricing",
+      "clicks": 1
+     }
+    ]
+   }
+  ]
+ },
+ "broadcasts__list-broadcasts": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794",
+    "name": "Announcements",
+    "audience_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "segment_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "status": "draft",
+    "created_at": "2026-11-01 15:13:31.723+00",
+    "scheduled_at": null,
+    "sent_at": null
+   },
+   {
+    "id": "559ac32e-9ef5-46fb-82a1-b76b840c0f7b",
+    "name": "Black Friday",
+    "audience_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "segment_id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "status": "sent",
+    "created_at": "2026-12-01 19:32:22.980+00",
+    "scheduled_at": "2026-12-02 19:32:22.980+00",
+    "sent_at": "2026-12-02 19:32:22.980+00"
+   }
+  ]
+ },
+ "broadcasts__send-broadcast": {
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "broadcasts__update-broadcast": {
+  "object": "broadcast",
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "contact-properties__create-contact-property": {
+  "object": "contact_property",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "contact-properties__delete-contact-property": {
+  "object": "contact_property",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+  "deleted": true
+ },
+ "contact-properties__get-contact-property": {
+  "object": "contact_property",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+  "key": "company_name",
+  "type": "string",
+  "fallback_value": "Acme Corp",
+  "created_at": "2026-04-08 00:11:13.110779+00"
+ },
+ "contact-properties__list-contact-properties": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+    "key": "company_name",
+    "type": "string",
+    "fallback_value": "Acme Corp",
+    "created_at": "2026-04-08 00:11:13.110779+00"
+   }
+  ]
+ },
+ "contact-properties__update-contact-property": {
+  "object": "contact_property",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "contacts__add-contact-to-segment": {
+  "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf"
+ },
+ "contacts__create-contact-import": {
+  "object": "contact_import",
+  "id": "479e3145-dd38-476b-932c-529ceb705947"
+ },
+ "contacts__create-contact": {
+  "object": "contact",
+  "id": "479e3145-dd38-476b-932c-529ceb705947"
+ },
+ "contacts__delete-contact-segment": {
+  "object": "contact_segment",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+  "audienceId": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "deleted": true
+ },
+ "contacts__delete-contact": {
+  "object": "contact",
+  "contact": "520784e2-887d-4c25-b53c-4ad46ad38100",
+  "deleted": true
+ },
+ "contacts__get-contact-import": {
+  "object": "contact_import",
+  "id": "479e3145-dd38-476b-932c-529ceb705947",
+  "status": "completed",
+  "created_at": "2026-05-15 18:32:37.823+00",
+  "completed_at": "2026-05-15 18:33:42.916+00",
+  "counts": {
+   "total": 1200,
+   "created": 800,
+   "updated": 300,
+   "skipped": 75,
+   "failed": 25
+  }
+ },
+ "contacts__get-contact-topics": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+    "name": "Product Updates",
+    "description": "New features, and latest announcements.",
+    "subscription": "opt_in"
+   }
+  ]
+ },
+ "contacts__get-contact": {
+  "object": "contact",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+  "email": "steve.wozniak@gmail.com",
+  "first_name": "Steve",
+  "last_name": "Wozniak",
+  "created_at": "2026-10-06 23:47:56.678+00",
+  "unsubscribed": false,
+  "properties": {
+   "company_name": {
+    "value": "Acme Corp",
+    "type": "string"
+   },
+   "department": {
+    "value": "Engineering",
+    "type": "string"
+   }
+  }
+ },
+ "contacts__list-contact-imports": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "object": "contact_import",
+    "id": "479e3145-dd38-476b-932c-529ceb705947",
+    "status": "completed",
+    "created_at": "2026-05-15 18:32:37.823+00",
+    "completed_at": "2026-05-15 18:33:42.916+00",
+    "counts": {
+     "total": 1200,
+     "created": 800,
+     "updated": 300,
+     "skipped": 75,
+     "failed": 25
+    }
+   }
+  ]
+ },
+ "contacts__list-contact-segments": {
+  "object": "list",
+  "data": [
+   {
+    "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "name": "Registered Users",
+    "created_at": "2026-10-06 22:59:55.977+00"
+   }
+  ],
+  "has_more": false
+ },
+ "contacts__list-contacts": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "email": "steve.wozniak@gmail.com",
+    "first_name": "Steve",
+    "last_name": "Wozniak",
+    "created_at": "2026-10-06 23:47:56.678+00",
+    "unsubscribed": false
+   }
+  ]
+ },
+ "contacts__update-contact-topics": {
+  "object": "contact_topics",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "contacts__update-contact": {
+  "object": "contact",
+  "id": "479e3145-dd38-476b-932c-529ceb705947"
+ },
+ "domains__claim-domain": {
+  "object": "domain_claim",
+  "id": "dacf4072-4119-4d88-932f-6c6126d3a9d1",
+  "name": "example.com",
+  "status": "pending",
+  "domain_id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "region": "us-east-1",
+  "record": {
+   "type": "TXT",
+   "name": "example.com",
+   "value": "resend-domain-verification=3f8a1c2d4e5b6a7f8091a2b3c4d5e6f7",
+   "ttl": "Auto"
+  },
+  "blocked_reason": null,
+  "failure_reason": null,
+  "created_at": "2026-06-16 17:12:02.059593+00",
+  "expires_at": "2026-06-23 17:12:02.059593+00"
+ },
+ "domains__create-domain": {
+  "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+  "name": "example.com",
+  "created_at": "2026-03-28 17:12:02.059593+00",
+  "status": "not_started",
+  "open_tracking": true,
+  "click_tracking": false,
+  "tracking_subdomain": "links",
+  "capabilities": {
+   "sending": "enabled",
+   "receiving": "disabled"
+  },
+  "records": [
+   {
+    "record": "DKIM",
+    "name": "resend._domainkey",
+    "value": "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDsc4Lh8xilsngyKEgN2S84+21gn+x6SEXtjWvPiAAmnmggr5FWG42WnqczpzQ/mNblqHz4CDwUum6LtY6SdoOlDmrhvp5khA3cd661W9FlK3yp7+jVACQElS7d9O6jv8VsBbVg4COess3gyLE5RyxqF1vYsrEXqyM8TBz1n5AGkQIDAQA2",
+    "type": "TXT",
+    "status": "not_started",
+    "ttl": "Auto"
+   },
+   {
+    "record": "SPF",
+    "name": "send",
+    "type": "MX",
+    "ttl": "Auto",
+    "status": "not_started",
+    "value": "feedback-smtp.us-east-1.amazonses.com",
+    "priority": 10
+   },
+   {
+    "record": "SPF",
+    "name": "send",
+    "value": "v=spf1 include:amazonses.com ~all",
+    "type": "TXT",
+    "ttl": "Auto",
+    "status": "not_started"
+   },
+   {
+    "record": "Tracking",
+    "type": "CNAME",
+    "name": "links",
+    "value": "links1.resend-dns.com",
+    "ttl": "Auto",
+    "status": "not_started"
+   }
+  ],
+  "region": "us-east-1"
+ },
+ "domains__delete-domain": {
+  "object": "domain",
+  "id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "deleted": true
+ },
+ "domains__get-domain-claim": {
+  "object": "domain_claim",
+  "id": "dacf4072-4119-4d88-932f-6c6126d3a9d1",
+  "name": "example.com",
+  "status": "pending",
+  "domain_id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "region": "us-east-1",
+  "record": {
+   "type": "TXT",
+   "name": "example.com",
+   "value": "resend-domain-verification=3f8a1c2d4e5b6a7f8091a2b3c4d5e6f7",
+   "ttl": "Auto"
+  },
+  "blocked_reason": null,
+  "failure_reason": null,
+  "created_at": "2026-06-16 17:12:02.059593+00",
+  "expires_at": "2026-06-23 17:12:02.059593+00"
+ },
+ "domains__get-domain": {
+  "object": "domain",
+  "id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "name": "example.com",
+  "status": "not_started",
+  "created_at": "2026-04-26 20:21:26.347412+00",
+  "region": "us-east-1",
+  "open_tracking": true,
+  "click_tracking": false,
+  "tracking_subdomain": "links",
+  "capabilities": {
+   "sending": "enabled",
+   "receiving": "disabled"
+  },
+  "records": [
+   {
+    "record": "SPF",
+    "name": "send",
+    "type": "MX",
+    "ttl": "Auto",
+    "status": "not_started",
+    "value": "feedback-smtp.us-east-1.amazonses.com",
+    "priority": 10
+   },
+   {
+    "record": "SPF",
+    "name": "send",
+    "value": "\"v=spf1 include:amazonses.com ~all\"",
+    "type": "TXT",
+    "ttl": "Auto",
+    "status": "not_started"
+   },
+   {
+    "record": "DKIM",
+    "name": "resend._domainkey",
+    "value": "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDsc4Lh8xilsngyKEgN2S84+21gn+x6SEXtjWvPiAAmnmggr5FWG42WnqczpzQ/mNblqHz4CDwUum6LtY6SdoOlDmrhvp5khA3cd661W9FlK3yp7+jVACQElS7d9O6jv8VsBbVg4COess3gyLE5RyxqF1vYsrEXqyM8TBz1n5AGkQIDAQA2",
+    "type": "TXT",
+    "status": "not_started",
+    "ttl": "Auto"
+   },
+   {
+    "record": "Tracking",
+    "name": "links.example.com",
+    "type": "CNAME",
+    "value": "links1.resend-dns.com",
+    "ttl": "Auto",
+    "status": "not_started"
+   }
+  ]
+ },
+ "domains__list-domains": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+    "name": "example.com",
+    "status": "not_started",
+    "created_at": "2026-04-26 20:21:26.347412+00",
+    "region": "us-east-1",
+    "open_tracking": true,
+    "click_tracking": false,
+    "capabilities": {
+     "sending": "enabled",
+     "receiving": "disabled"
+    }
+   }
+  ]
+ },
+ "domains__update-domain": {
+  "object": "domain",
+  "id": "b8617ad3-b712-41d9-81a0-f7c3d879314e"
+ },
+ "domains__verify-domain-claim": {
+  "object": "domain_claim",
+  "id": "dacf4072-4119-4d88-932f-6c6126d3a9d1",
+  "name": "example.com",
+  "status": "pending",
+  "domain_id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "region": "us-east-1",
+  "record": {
+   "type": "TXT",
+   "name": "example.com",
+   "value": "resend-domain-verification=3f8a1c2d4e5b6a7f8091a2b3c4d5e6f7",
+   "ttl": "Auto"
+  },
+  "blocked_reason": null,
+  "failure_reason": null,
+  "created_at": "2026-06-16 17:12:02.059593+00",
+  "expires_at": "2026-06-23 17:12:02.059593+00"
+ },
+ "domains__verify-domain": {
+  "object": "domain",
+  "id": "d91cd9bd-1176-453e-8fc1-35364d380206"
+ },
+ "emails__cancel-email": {
+  "object": "email",
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "emails__get-metrics": {
+  "object": "metrics",
+  "start_date": "2026-07-01T00:00:00.000Z",
+  "end_date": "2026-07-08T00:00:00.000Z",
+  "metrics": [
+   "sent",
+   "delivered",
+   "open_rate"
+  ],
+  "dimensions": [
+   "period",
+   "domain"
+  ],
+  "granularity": "daily",
+  "totals": {
+   "sent": 1204,
+   "delivered": 1180,
+   "open_rate": 50.0
+  },
+  "data": [
+   {
+    "period": "2026-07-01",
+    "domain_id": "d91cd9bd-1176-4f47-2a4b-fce2d5399cbf",
+    "domain_name": "example.com",
+    "sent": 172,
+    "delivered": 169,
+    "open_rate": 49.7
+   }
+  ]
+ },
+ "emails__list-email-attachments": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "2a0c9ce0-3112-4728-976e-47ddcd16a318",
+    "filename": "avatar.png",
+    "size": 4096,
+    "content_type": "image/png",
+    "content_disposition": "inline",
+    "content_id": "img001",
+    "download_url": "https://outbound-cdn.resend.com/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318?some-params=example&signature=sig-123",
+    "expires_at": "2026-10-17T14:29:41.521Z"
+   }
+  ]
+ },
+ "emails__list-emails": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+    "message_id": "<111-222-333@email.example.com>",
+    "to": [
+     "delivered@resend.dev"
+    ],
+    "from": "Acme <onboarding@resend.dev>",
+    "created_at": "2026-04-03 22:13:42.674981+00",
+    "subject": "Hello World",
+    "bcc": null,
+    "cc": null,
+    "reply_to": null,
+    "last_event": "delivered",
+    "scheduled_at": null
+   },
+   {
+    "id": "3a9f8c2b-1e5d-4f8a-9c7b-2d6e5f8a9c7b",
+    "message_id": "<444-555-666@email.example.com>",
+    "to": [
+     "user@example.com"
+    ],
+    "from": "Acme <onboarding@resend.dev>",
+    "created_at": "2026-04-03 21:45:12.345678+00",
+    "subject": "Welcome to Acme",
+    "bcc": null,
+    "cc": null,
+    "reply_to": null,
+    "last_event": "opened",
+    "scheduled_at": null
+   }
+  ]
+ },
+ "emails__list-received-email-attachments": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "2a0c9ce0-3112-4728-976e-47ddcd16a318",
+    "filename": "avatar.png",
+    "size": 4096,
+    "content_type": "image/png",
+    "content_disposition": "inline",
+    "content_id": "img001",
+    "download_url": "https://inbound-cdn.resend.com/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318?some-params=example&signature=sig-123",
+    "expires_at": "2026-10-17T14:29:41.521Z"
+   }
+  ]
+ },
+ "emails__list-received-emails": {
+  "object": "list",
+  "has_more": true,
+  "data": [
+   {
+    "id": "a39999a6-88e3-48b1-888b-beaabcde1b33",
+    "to": [
+     "recipient@example.com"
+    ],
+    "from": "sender@example.com",
+    "created_at": "2026-10-09T14:37:40.951Z",
+    "subject": "Hello World",
+    "bcc": [],
+    "cc": [],
+    "reply_to": [],
+    "message_id": "<111-222-333@email.example.com>",
+    "attachments": [
+     {
+      "filename": "example.txt",
+      "content_type": "text/plain",
+      "content_id": null,
+      "content_disposition": "attachment",
+      "id": "47e999c7-c89c-4999-bf32-aaaaa1c3ff21",
+      "size": 13
+     }
+    ]
+   }
+  ]
+ },
+ "emails__retrieve-email-attachment": {
+  "object": "attachment",
+  "id": "2a0c9ce0-3112-4728-976e-47ddcd16a318",
+  "filename": "avatar.png",
+  "size": 4096,
+  "content_type": "image/png",
+  "content_disposition": "inline",
+  "content_id": "img001",
+  "download_url": "https://outbound-cdn.resend.com/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318?some-params=example&signature=sig-123",
+  "expires_at": "2026-10-17T14:29:41.521Z"
+ },
+ "emails__retrieve-email": {
+  "object": "email",
+  "id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+  "message_id": "<111-222-333@email.example.com>",
+  "to": [
+   "delivered@resend.dev"
+  ],
+  "from": "Acme <onboarding@resend.dev>",
+  "created_at": "2026-04-03 22:13:42.674981+00",
+  "subject": "Hello World",
+  "html": "Congrats on sending your <strong>first email</strong>!",
+  "text": null,
+  "bcc": [],
+  "cc": [],
+  "reply_to": [],
+  "last_event": "delivered",
+  "scheduled_at": null,
+  "tags": [
+   {
+    "name": "category",
+    "value": "confirm_email"
+   }
+  ]
+ },
+ "emails__retrieve-received-email-attachment": {
+  "object": "attachment",
+  "id": "2a0c9ce0-3112-4728-976e-47ddcd16a318",
+  "filename": "avatar.png",
+  "size": 4096,
+  "content_type": "image/png",
+  "content_disposition": "inline",
+  "content_id": "img001",
+  "download_url": "https://inbound-cdn.resend.com/4ef9a417-02e9-4d39-ad75-9611e0fcc33c/attachments/2a0c9ce0-3112-4728-976e-47ddcd16a318?some-params=example&signature=sig-123",
+  "expires_at": "2026-10-17T14:29:41.521Z"
+ },
+ "emails__retrieve-received-email": {
+  "object": "email",
+  "id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+  "to": [
+   "delivered@resend.dev"
+  ],
+  "from": "onboarding@resend.dev",
+  "created_at": "2026-04-03T22:13:42.674Z",
+  "subject": "Hello World",
+  "html": "Congrats on sending your <strong>first email</strong>!",
+  "html_format": "data_uri",
+  "text": null,
+  "headers": {
+   "from": "Acme <onboarding@resend.dev>",
+   "return-path": "lucas.costa@resend.com",
+   "mime-version": "1.0"
+  },
+  "bcc": [],
+  "cc": [],
+  "reply_to": [],
+  "received_for": [
+   "forwarded@example.com"
+  ],
+  "authentication": {
+   "spf": "pass",
+   "dkim": "pass",
+   "dmarc": "pass"
+  },
+  "message_id": "<111-222-333@email.example.com>",
+  "raw": {
+   "download_url": "https://example.resend.com/receiving/raw/054da427-439a-4e91-b785-e4fb1966285f?Signature=...",
+   "expires_at": "2026-04-03T23:13:42.674Z"
+  },
+  "attachments": [
+   {
+    "id": "2a0c9ce0-3112-4728-976e-47ddcd16a318",
+    "filename": "avatar.png",
+    "content_type": "image/png",
+    "content_disposition": "inline",
+    "content_id": "img001",
+    "size": 4096
+   },
+   {
+    "id": "3b1d0df1-4223-5839-087f-54eedd27b419",
+    "filename": "document.pdf",
+    "content_type": "application/pdf",
+    "content_disposition": null,
+    "content_id": null,
+    "size": 13264
+   }
+  ]
+ },
+ "emails__send-batch-emails": {
+  "data": [
+   {
+    "id": "ae2014de-c168-4c61-8267-70d2662a1ce1"
+   },
+   {
+    "id": "faccb7a5-8a28-4e9a-ac64-8da1cc3bc1cb"
+   }
+  ]
+ },
+ "emails__send-email": {
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "emails__share-email": {
+  "object": "email",
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794",
+  "url": "https://resend.com/shared?token=eyJhbGciOiJIUzI1NiJ9..."
+ },
+ "emails__update-email": {
+  "object": "email",
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794"
+ },
+ "events__create-event": {
+  "object": "event",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+ },
+ "events__delete-event": {
+  "object": "event",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "deleted": true
+ },
+ "events__get-event": {
+  "object": "event",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "name": "user.created",
+  "schema": {
+   "plan": "string"
+  },
+  "created_at": "2026-10-01 12:00:00.000000+00",
+  "updated_at": "2026-10-01 12:00:00.000000+00"
+ },
+ "events__list-events": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "user.created",
+    "schema": {
+     "plan": "string"
+    },
+    "created_at": "2026-10-01 12:00:00.000000+00",
+    "updated_at": "2026-10-01 12:00:00.000000+00"
+   },
+   {
+    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "name": "user.upgraded",
+    "schema": null,
+    "created_at": "2026-09-15 08:30:00.000000+00",
+    "updated_at": "2026-09-20 14:00:00.000000+00"
+   }
+  ]
+ },
+ "events__send-event": {
+  "object": "event",
+  "event": "user.created"
+ },
+ "events__update-event": {
+  "object": "event",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+ },
+ "inboxes__add-thread-labels": {
+  "object": "list",
+  "data": [
+   {
+    "id": "2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d",
+    "name": "Billing",
+    "color": "#00A2C7"
+   },
+   {
+    "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34",
+    "name": "Urgent",
+    "color": "#E93D82"
+   }
+  ]
+ },
+ "inboxes__create-draft": {
+  "object": "inbox_draft",
+  "id": "c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32"
+ },
+ "inboxes__create-inbox": {
+  "object": "inbox",
+  "id": "b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1"
+ },
+ "inboxes__create-label": {
+  "object": "inbox_label",
+  "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34"
+ },
+ "inboxes__delete-draft": {
+  "object": "inbox_draft",
+  "id": "c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32",
+  "deleted": true
+ },
+ "inboxes__delete-inbox": {
+  "object": "inbox",
+  "id": "b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1",
+  "deleted": true
+ },
+ "inboxes__delete-label": {
+  "object": "inbox_label",
+  "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34",
+  "deleted": true
+ },
+ "inboxes__delete-thread": {
+  "object": "inbox_thread",
+  "id": "4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12",
+  "deleted": true
+ },
+ "inboxes__forward-thread-email": {
+  "id": "6a0c8e58-3d9e-4f7a-8b14-2e3f4a5b6c71"
+ },
+ "inboxes__get-agent": {
+  "object": "inbox_agent",
+  "instructions": "Answer refund questions yourself. Escalate legal threats.",
+  "tone": "concise_professional",
+  "actions": [
+   "draft_reply",
+   "add_labels"
+  ]
+ },
+ "inboxes__get-draft": {
+  "object": "inbox_draft",
+  "id": "c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32",
+  "type": "standalone",
+  "to": [
+   "ada@example.org"
+  ],
+  "cc": [],
+  "bcc": [],
+  "subject": "Refund for order 1041",
+  "html": "<p>Refund issued for order 1041.</p>",
+  "text": "Refund issued for order 1041.",
+  "thread_id": null,
+  "reply_to_email_id": null,
+  "email_id": null,
+  "created_at": "2026-08-05T14:12:04.110Z",
+  "updated_at": "2026-08-05T14:12:04.110Z",
+  "attachments": [
+   {
+    "id": "9d4f2b81-6c3a-4e7d-8b12-0a5c6d7e8f90",
+    "filename": "note.txt",
+    "content_type": "text/plain",
+    "size": 5
+   }
+  ]
+ },
+ "inboxes__get-inbox": {
+  "object": "inbox",
+  "id": "b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1",
+  "name": "Customer Support",
+  "email_address": "support@example.com",
+  "domain_id": "d91cd9bd-1176-453e-8fc1-35364d380206",
+  "receiving_address": null,
+  "from_name": "Ada from Support",
+  "unread": 3,
+  "drafts": 2,
+  "last_received": "2026-08-05T14:03:11.229Z",
+  "created_at": "2026-08-01T09:12:44.512Z",
+  "updated_at": "2026-08-03T16:20:05.004Z"
+ },
+ "inboxes__get-thread-email": {
+  "id": "5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60",
+  "direction": "inbound",
+  "from": "Ada Lovelace <ada@example.org>",
+  "to": [
+   "support@example.com"
+  ],
+  "cc": [],
+  "bcc": [],
+  "reply_to": [
+   "replies@example.org"
+  ],
+  "subject": "Refund for order 1041",
+  "message_id": "<1041@example.org>",
+  "html": "<p>Could I get a refund for order 1041?</p>",
+  "text": "Could I get a refund for order 1041?",
+  "attachments": [
+   {
+    "id": "9d4f2b81-6c3a-4e7d-8b12-0a5c6d7e8f90",
+    "filename": "receipt.pdf",
+    "size": 20841
+   }
+  ],
+  "read": false,
+  "received_at": "2026-08-05T14:03:11.229Z"
+ },
+ "inboxes__get-thread": {
+  "object": "inbox_thread",
+  "id": "4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12",
+  "subject": "Refund for order 1041",
+  "folder": "inbox",
+  "labels": [
+   {
+    "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34",
+    "name": "Urgent",
+    "color": "#E93D82"
+   }
+  ],
+  "read": false
+ },
+ "inboxes__list-drafts": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32",
+    "type": "standalone",
+    "to": [
+     "ada@example.org"
+    ],
+    "cc": [],
+    "bcc": [],
+    "subject": "Refund for order 1041",
+    "snippet": "Refund issued for order 1041.",
+    "thread_id": null,
+    "reply_to_email_id": null,
+    "updated_at": "2026-08-05T14:12:04.110Z",
+    "attachments": [
+     {
+      "id": "9d4f2b81-6c3a-4e7d-8b12-0a5c6d7e8f90",
+      "filename": "note.txt",
+      "content_type": "text/plain",
+      "size": 5
+     }
+    ]
+   }
+  ]
+ },
+ "inboxes__list-inboxes": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1",
+    "name": "Customer Support",
+    "email_address": "support@example.com",
+    "from_name": "Ada from Support",
+    "unread": 3,
+    "last_received": "2026-08-05T14:03:11.229Z",
+    "created_at": "2026-08-01T09:12:44.512Z",
+    "updated_at": "2026-08-03T16:20:05.004Z"
+   },
+   {
+    "id": "1c5e0f3a-6b21-4d9a-8e77-5c0a9d8b4e12",
+    "name": "billing@example.com",
+    "email_address": "billing@example.com",
+    "from_name": null,
+    "unread": 0,
+    "last_received": null,
+    "created_at": "2026-07-20T11:00:00.000Z",
+    "updated_at": "2026-07-20T11:00:00.318Z"
+   }
+  ]
+ },
+ "inboxes__list-labels": {
+  "object": "list",
+  "data": [
+   {
+    "id": "2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d",
+    "name": "Billing",
+    "color": "#00A2C7",
+    "created_at": "2026-08-01T09:12:03.004Z"
+   },
+   {
+    "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34",
+    "name": "Urgent",
+    "color": "#E93D82",
+    "created_at": "2026-08-05T14:07:42.881Z"
+   }
+  ]
+ },
+ "inboxes__list-thread-emails": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "5b1a9f47-2c8d-4e6f-9a03-1d2e3f4a5b60",
+    "direction": "inbound",
+    "from": "Ada Lovelace <ada@example.org>",
+    "to": [
+     "support@example.com"
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [
+     "replies@example.org"
+    ],
+    "subject": "Refund for order 1041",
+    "message_id": "<1041@example.org>",
+    "html": "<p>Could I get a refund for order 1041?</p>",
+    "text": "Could I get a refund for order 1041?",
+    "attachments": [
+     {
+      "id": "9d4f2b81-6c3a-4e7d-8b12-0a5c6d7e8f90",
+      "filename": "receipt.pdf",
+      "size": 20841
+     }
+    ],
+    "read": false,
+    "received_at": "2026-08-05T14:03:11.229Z"
+   }
+  ]
+ },
+ "inboxes__list-threads": {
+  "object": "list",
+  "has_more": true,
+  "data": [
+   {
+    "id": "4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12",
+    "subject": "Refund for order 1041",
+    "from": "Ada Lovelace <ada@example.org>",
+    "to": [
+     "support@example.com"
+    ],
+    "cc": [],
+    "bcc": [],
+    "labels": [
+     {
+      "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34",
+      "name": "Urgent",
+      "color": "#E93D82"
+     }
+    ],
+    "email_count": 2,
+    "has_attachment": true,
+    "has_draft": false,
+    "read": false,
+    "received_at": "2026-08-05T14:03:11.229Z",
+    "folder": "inbox"
+   }
+  ]
+ },
+ "inboxes__remove-thread-label": {
+  "object": "list",
+  "data": [
+   {
+    "id": "2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d",
+    "name": "Billing",
+    "color": "#00A2C7"
+   }
+  ]
+ },
+ "inboxes__reply-thread-email": {
+  "id": "6a0c8e58-3d9e-4f7a-8b14-2e3f4a5b6c71"
+ },
+ "inboxes__search-threads": {
+  "object": "list",
+  "has_more": true,
+  "data": [
+   {
+    "id": "b1e7c9d2-5a4f-4c3e-8d2b-7f6a1e9c0b54",
+    "subject": "September invoice",
+    "from": "Isabella <isabella@example.com>",
+    "to": [
+     "billing@example.com"
+    ],
+    "cc": [],
+    "bcc": [],
+    "labels": [
+     {
+      "id": "0c9e4b7a-3f2d-4a1c-b8e6-5d7f2a9c1e03",
+      "name": "Billing",
+      "color": "#46A758"
+     }
+    ],
+    "email_count": 3,
+    "has_attachment": true,
+    "has_draft": false,
+    "read": false,
+    "received_at": "2026-09-24T14:12:08.000Z",
+    "folder": "inbox",
+    "matched_email_id": "e8a3f1c6-2b9d-4e5a-a7c4-9d1b6f3e2a80"
+   },
+   {
+    "id": "7d2f8a3b-9c1e-4b6d-a5f2-3e8c0b7a9d16",
+    "subject": "Re: Q3 renewal",
+    "from": "Carolina <carolina@example.com>",
+    "to": [
+     "billing@example.com"
+    ],
+    "cc": [
+     "finance@example.com"
+    ],
+    "bcc": [],
+    "labels": [],
+    "email_count": 5,
+    "has_attachment": false,
+    "has_draft": false,
+    "read": true,
+    "received_at": "2026-09-18T09:47:31.000Z",
+    "folder": "inbox",
+    "matched_email_id": "3c6b9e2d-7a1f-4d8c-b3e5-0f2a8d6c4b19"
+   }
+  ]
+ },
+ "inboxes__send-draft": {
+  "id": "6a0c8e58-3d9e-4f7a-8b14-2e3f4a5b6c71"
+ },
+ "inboxes__set-thread-labels": {
+  "object": "list",
+  "data": [
+   {
+    "id": "2a8b4c6d-1e3f-4a5b-9c7d-8e0f1a2b3c4d",
+    "name": "Billing",
+    "color": "#00A2C7"
+   }
+  ]
+ },
+ "inboxes__update-agent": {
+  "object": "inbox_agent",
+  "id": "a1f84a4e-6f2b-4f0a-9c1d-8a2e5b3c7d90"
+ },
+ "inboxes__update-draft": {
+  "object": "inbox_draft",
+  "id": "c3a1e8b4-2d5f-4a7c-9e10-6b8d7f5a4c32"
+ },
+ "inboxes__update-inbox": {
+  "object": "inbox",
+  "id": "b3e2b2b6-3f0e-4c8e-9ad3-2f43a1e2c7f1"
+ },
+ "inboxes__update-label": {
+  "object": "inbox_label",
+  "id": "7f9c1d2e-4a6b-4c3d-8e15-9b0a7c6d5e34"
+ },
+ "inboxes__update-thread": {
+  "object": "inbox_thread",
+  "id": "4d8e2a1c-9b3f-4c6d-8a21-3e5f7c9c0d12",
+  "subject": "Refund for order 1041",
+  "folder": "spam",
+  "labels": [],
+  "read": true
+ },
+ "logs__list-logs": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "37e4414c-5e25-4dbc-a071-43552a4bd53b",
+    "created_at": "2026-03-30 13:43:54.622865+00",
+    "endpoint": "/emails",
+    "method": "POST",
+    "response_status": 200,
+    "user_agent": "resend-node:6.0.3"
+   },
+   {
+    "id": "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "created_at": "2026-03-30 12:15:00.123456+00",
+    "endpoint": "/emails/4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+    "method": "GET",
+    "response_status": 200,
+    "user_agent": "curl/8.7.1"
+   }
+  ]
+ },
+ "logs__retrieve-log": {
+  "object": "log",
+  "id": "37e4414c-5e25-4dbc-a071-43552a4bd53b",
+  "created_at": "2026-03-30 13:43:54.622865+00",
+  "endpoint": "/emails",
+  "method": "POST",
+  "response_status": 200,
+  "user_agent": "resend-node:6.0.3",
+  "request_body": {
+   "from": "Acme <onboarding@resend.dev>",
+   "to": [
+    "delivered@resend.dev"
+   ],
+   "subject": "Hello World"
+  },
+  "response_body": {
+   "id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c"
+  }
+ },
+ "oauth__list-grants": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "650e8400-e29b-41d4-a716-446655440001",
+    "client_id": "430eed87-632a-4ea6-90db-0aace67ec228",
+    "scopes": [
+     "emails:send"
+    ],
+    "resource": null,
+    "created_at": "2026-04-08 00:11:13.110779+00",
+    "revoked_at": null,
+    "revoked_reason": null,
+    "client": {
+     "name": "Resend CLI",
+     "logo_uri": "https://example.com/logo.png"
+    }
+   },
+   {
+    "id": "650e8400-e29b-41d4-a716-446655440002",
+    "client_id": "430eed87-632a-4ea6-90db-0aace67ec228",
+    "scopes": [
+     "emails:send",
+     "domains:read"
+    ],
+    "resource": "https://api.resend.com",
+    "created_at": "2026-04-07 00:11:13.110779+00",
+    "revoked_at": "2026-04-09 00:11:13.110779+00",
+    "revoked_reason": "revoked_from_api",
+    "client": {
+     "name": "Resend CLI",
+     "logo_uri": "https://example.com/logo.png"
+    }
+   }
+  ]
+ },
+ "oauth__revoke-grant": {
+  "object": "oauth_grant",
+  "id": "650e8400-e29b-41d4-a716-446655440001",
+  "revoked_at": "2026-04-08T00:11:13.110Z",
+  "revoked_reason": "revoked_from_api"
+ },
+ "oauth__token": {
+  "access_token": "eyJhbGciOiJFUzI1NiIsImtpZCI6Im9hdXRoX2tleSIsInR5cCI6ImF0K2p3dCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 900,
+  "refresh_token": "JcL7aYfE7S9h3L4qv0o2e1w8m6n5b3x9RkP2tD4uV6Q",
+  "scope": "emails:send"
+ },
+ "pagination": {
+  "object": "list",
+  "has_more": true,
+  "data": []
+ },
+ "segments__create-segment": {
+  "object": "segment",
+  "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "name": "Registered Users"
+ },
+ "segments__delete-segment": {
+  "object": "segment",
+  "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "deleted": true
+ },
+ "segments__get-segment-metrics": {
+  "object": "metrics",
+  "metrics": [
+   "all_contacts"
+  ],
+  "dimensions": [
+   "segment"
+  ],
+  "totals": {
+   "all_contacts": 12450
+  },
+  "data": [
+   {
+    "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "name": "Registered Users",
+    "all_contacts": 4300
+   }
+  ]
+ },
+ "segments__get-segment": {
+  "object": "segment",
+  "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+  "name": "Registered Users",
+  "created_at": "2026-10-06 22:59:55.977+00"
+ },
+ "segments__list-segment-contacts": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "email": "steve.wozniak@gmail.com",
+    "first_name": "Steve",
+    "last_name": "Wozniak",
+    "created_at": "2026-10-06 23:47:56.678+00",
+    "unsubscribed": false
+   }
+  ]
+ },
+ "segments__list-segments": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf",
+    "name": "Registered Users",
+    "created_at": "2026-10-06 22:59:55.977+00"
+   }
+  ]
+ },
+ "segments__update-segment": {
+  "object": "segment",
+  "id": "78261eea-8f8b-4381-83c6-79fa7120f1cf"
+ },
+ "suppressions__add-batch-suppressions": {
+  "data": [
+   {
+    "object": "suppression",
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3"
+   },
+   {
+    "object": "suppression",
+    "id": "520784e2-887d-4c25-b53c-4ad46ad38100"
+   }
+  ]
+ },
+ "suppressions__add-suppression": {
+  "object": "suppression",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3"
+ },
+ "suppressions__get-suppression": {
+  "object": "suppression",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+  "email": "steve.wozniak@example.com",
+  "origin": "bounce",
+  "source_id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+  "created_at": "2026-10-06 23:47:56.678+00"
+ },
+ "suppressions__list-suppressions": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "email": "steve.wozniak@example.com",
+    "origin": "manual",
+    "source_id": null,
+    "created_at": "2026-10-06 23:47:56.678+00"
+   },
+   {
+    "id": "520784e2-887d-4c25-b53c-4ad46ad38100",
+    "email": "susan.kare@example.com",
+    "origin": "bounce",
+    "source_id": "4ef9a417-02e9-4d39-ad75-9611e0fcc33c",
+    "created_at": "2026-10-07 08:12:03.412+00"
+   }
+  ]
+ },
+ "suppressions__remove-batch-suppressions": {
+  "data": [
+   {
+    "object": "suppression",
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "deleted": true
+   }
+  ]
+ },
+ "suppressions__remove-suppression": {
+  "object": "suppression",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+  "deleted": true
+ },
+ "templates__create-template": {
+  "id": "49a3999c-0ce1-4ea6-ab68-afcd6dc2e794",
+  "object": "template"
+ },
+ "templates__delete-template": {
+  "object": "template",
+  "id": "34a080c9-b17d-4187-ad80-5af20266e535",
+  "deleted": true
+ },
+ "templates__duplicate-template": {
+  "object": "template",
+  "id": "e169aa45-1ecf-4183-9955-b1499d5701d3"
+ },
+ "templates__get-template": {
+  "object": "template",
+  "id": "34a080c9-b17d-4187-ad80-5af20266e535",
+  "current_version_id": "b2693018-7abb-4b4b-b4cb-aadf72dc06bd",
+  "alias": "reset-password",
+  "name": "reset-password",
+  "created_at": "2026-10-06 23:47:56.678+00",
+  "updated_at": "2026-10-06 23:47:56.678+00",
+  "status": "published",
+  "published_at": "2026-10-06 23:47:56.678+00",
+  "from": "John Doe <john.doe@example.com>",
+  "subject": "Hello, world!",
+  "reply_to": null,
+  "html": "<h1>Hello, world!</h1>",
+  "text": "Hello, world!",
+  "variables": [
+   {
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "key": "user_name",
+    "type": "string",
+    "fallback_value": "John Doe",
+    "created_at": "2026-10-06 23:47:56.678+00",
+    "updated_at": "2026-10-06 23:47:56.678+00"
+   }
+  ],
+  "has_unpublished_versions": true
+ },
+ "templates__list-templates": {
+  "object": "list",
+  "data": [
+   {
+    "id": "e169aa45-1ecf-4183-9955-b1499d5701d3",
+    "name": "reset-password",
+    "status": "draft",
+    "published_at": null,
+    "created_at": "2026-10-06 23:47:56.678+00",
+    "updated_at": "2026-10-06 23:47:56.678+00",
+    "alias": "reset-password"
+   },
+   {
+    "id": "b7f9c2e1-1234-4abc-9def-567890abcdef",
+    "name": "welcome-message",
+    "status": "published",
+    "published_at": "2026-10-06 23:47:56.678+00",
+    "created_at": "2026-10-06 23:47:56.678+00",
+    "updated_at": "2026-10-06 23:47:56.678+00",
+    "alias": "welcome-message"
+   }
+  ],
+  "has_more": false
+ },
+ "templates__publish-template": {
+  "object": "template",
+  "id": "34a080c9-b17d-4187-ad80-5af20266e535"
+ },
+ "templates__update-template": {
+  "object": "template",
+  "id": "34a080c9-b17d-4187-ad80-5af20266e535"
+ },
+ "topics__create-topic": {
+  "object": "topic",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "topics__delete-topic": {
+  "object": "topic",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+  "deleted": true
+ },
+ "topics__get-topic": {
+  "object": "topic",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+  "name": "Weekly Newsletter",
+  "description": "Weekly newsletter for our subscribers",
+  "default_subscription": "opt_in",
+  "visibility": "public",
+  "created_at": "2026-04-08 00:11:13.110779+00"
+ },
+ "topics__list-topics": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e",
+    "name": "Weekly Newsletter",
+    "description": "Weekly newsletter for our subscribers",
+    "default_subscription": "opt_in",
+    "visibility": "public",
+    "created_at": "2026-04-08 00:11:13.110779+00"
+   }
+  ]
+ },
+ "topics__update-topic": {
+  "object": "topic",
+  "id": "b6d24b8e-af0b-4c3c-be0c-359bbd97381e"
+ },
+ "webhooks__create-webhook": {
+  "object": "webhook",
+  "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+  "signing_secret": "whsec_xxxxxxxxxx"
+ },
+ "webhooks__delete-webhook": {
+  "object": "webhook",
+  "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+  "deleted": true
+ },
+ "webhooks__get-event": {
+  "object": "webhook_event",
+  "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+  "type": "email.sent",
+  "created_at": "2026-08-22T15:28:00.000Z",
+  "status": "attempting",
+  "next_attempt_at": "2026-08-22T15:33:00.000Z",
+  "payload": {
+   "type": "email.sent",
+   "created_at": "2026-08-22T15:28:00.000Z",
+   "data": {
+    "email_id": "571f1f42-1c2d-4b1f-8f8e-8b3b5b3b5b3b",
+    "from": "onboarding@resend.dev",
+    "to": [
+     "delivered@resend.dev"
+    ],
+    "subject": "Welcome",
+    "created_at": "2026-08-22T15:27:59.000Z"
+   }
+  }
+ },
+ "webhooks__get-webhook": {
+  "object": "webhook",
+  "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+  "created_at": "2026-08-22 15:28:00.000+00",
+  "status": "enabled",
+  "endpoint": "https://example.com/handler",
+  "events": [
+   "email.sent"
+  ],
+  "signing_secret": "whsec_xxxxxxxxxx"
+ },
+ "webhooks__list-event-attempts": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+    "http_status_code": 200,
+    "response": "{\"ok\":true}",
+    "sent_at": "2026-08-22T15:33:12.000Z"
+   },
+   {
+    "id": "atmpt_2ZbUCwvGmIT4mLIN6d3Yz0Ainbd",
+    "http_status_code": 500,
+    "response": "Internal Server Error",
+    "sent_at": "2026-08-22T15:28:05.000Z"
+   }
+  ]
+ },
+ "webhooks__list-events": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "msg_1srOsB4mXhCqCVwAxYRNnpFZhb3",
+    "type": "email.delivered",
+    "created_at": "2026-08-22T15:28:00.000Z",
+    "status": "failed"
+   },
+   {
+    "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+    "type": "email.sent",
+    "created_at": "2026-08-22T15:27:42.000Z",
+    "status": "success"
+   }
+  ]
+ },
+ "webhooks__list-webhooks": {
+  "object": "list",
+  "has_more": false,
+  "data": [
+   {
+    "id": "7ab123cd-ef45-6789-abcd-ef0123456789",
+    "created_at": "2026-09-10 10:15:30.000+00",
+    "status": "disabled",
+    "endpoint": "https://first-webhook.example.com/handler",
+    "events": [
+     "email.sent"
+    ]
+   },
+   {
+    "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+    "created_at": "2026-08-22 15:28:00.000+00",
+    "status": "enabled",
+    "endpoint": "https://second-webhook.example.com/receive",
+    "events": [
+     "email.received"
+    ]
+   }
+  ]
+ },
+ "webhooks__replay-event": {
+  "object": "webhook_event",
+  "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2"
+ },
+ "webhooks__rotate-signing-secret": {
+  "object": "webhook",
+  "id": "4dd369bc-aa82-4ff3-97de-514ae3000ee0",
+  "signing_secret": "whsec_xxxxxxxxxx"
+ },
+ "webhooks__update-webhook": {
+  "object": "webhook",
+  "id": "430eed87-632a-4ea6-90db-0aace67ec228"
+ }
+}
