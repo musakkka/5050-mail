@@ -27,6 +27,7 @@ ARG_ADMIN_EMAIL="${ADMIN_EMAIL:-}"
 ARG_ADMIN_PASSWORD="${ADMIN_PASSWORD:-}"
 ARG_CF_TOKEN="${CLOUDFLARE_API_TOKEN:-}"
 ARG_RELAY_HOST="${RELAY_HOST:-}" ARG_RELAY_PORT="${RELAY_PORT:-}" ARG_RELAY_USER="${RELAY_USERNAME:-}" ARG_RELAY_PASS="${RELAY_PASSWORD:-}"
+ARG_RELAY_PRESET="${RELAY_PRESET:-}" RELAY_REGION="${RELAY_REGION:-}" RELAY_FLAG=0 RELAY_TEST=0 RELAY_CONFIGURED=0
 ARG_SEND_TRANSPORT="${SEND_TRANSPORT:-}"
 ARG_MAIL_HOST="" ARG_SEND_HOST="" ARG_API_HOST=""
 
@@ -42,8 +43,13 @@ Usage: install.sh [options]
   --api-host HOST            5050 Send API (default api.DOMAIN)
   --tls acme|internal        acme: Let's Encrypt (default); internal: self-signed, for test domains
   --cloudflare-token TOKEN   optional: create DNS records + DNS-01 certificates via Cloudflare
+  --relay [PRESET]           outbound relay for when port 25 is blocked. PRESET is one of
+                             cloudflare resend ses postmark mailgun brevo smtp2go; without it a menu is shown.
+                             On an existing install this only reconfigures the relay and flushes the queue.
   --relay-host HOST --relay-port PORT --relay-user USER --relay-password PASS
-                             optional outbound smarthost (when port 25 is blocked)
+                             a custom relay (or overrides for a preset); the login is tested before saving
+  --relay-region REGION      Amazon SES region (default us-east-1)
+  --relay-test               test the saved relay login (SMTP connect + AUTH, nothing is sent) and exit
   --send-transport smtp|log  5050 Send delivery (default smtp = via the mail server; log = drop)
   --dir DIR                  install directory (default /opt/5050-mail)
   --source DIR               install from a local checkout instead of GitHub
@@ -53,7 +59,8 @@ Usage: install.sh [options]
   --uninstall [--purge]      stop and remove containers (--purge also deletes all mail and data)
   -h, --help
 Environment equivalents: MAIL_DOMAIN, ADMIN_EMAIL, ADMIN_PASSWORD, TLS_MODE, CLOUDFLARE_API_TOKEN,
-RELAY_HOST/RELAY_PORT/RELAY_USERNAME/RELAY_PASSWORD, SEND_TRANSPORT, FIVEFIFTY_DIR, FIVEFIFTY_SRC, ASSUME_YES=1.
+RELAY_HOST/RELAY_PORT/RELAY_USERNAME/RELAY_PASSWORD/RELAY_PRESET/RELAY_REGION,
+RELAY_SKIP_VALIDATE=1, SEND_TRANSPORT, FIVEFIFTY_DIR, FIVEFIFTY_SRC, ASSUME_YES=1.
 EOF
 }
 
@@ -67,6 +74,9 @@ while [ $# -gt 0 ]; do
     --api-host) ARG_API_HOST="$2"; shift ;;
     --tls) TLS="$2"; shift ;;
     --cloudflare-token) ARG_CF_TOKEN="$2"; shift ;;
+    --relay) RELAY_FLAG=1; if [ $# -gt 1 ] && [[ "$2" != -* ]]; then ARG_RELAY_PRESET="$2"; shift; fi ;;
+    --relay-region) RELAY_REGION="$2"; shift ;;
+    --relay-test) RELAY_TEST=1 ;;
     --relay-host) ARG_RELAY_HOST="$2"; shift ;;
     --relay-port) ARG_RELAY_PORT="$2"; shift ;;
     --relay-user) ARG_RELAY_USER="$2"; shift ;;
@@ -133,6 +143,275 @@ wait_healthy() { # wait_healthy service [timeout_s]
   die "$svc did not become healthy within ${t}s"
 }
 
+# ---------------------------------------------------------------- outbound relay
+# Everything between the relay:begin/end markers is unit-tested by tests/install/relay-test.sh.
+# --- relay:begin
+RELAY_PRESETS="cloudflare resend ses postmark mailgun brevo smtp2go custom"
+R_PRESET="" R_HOST="" R_PORT="" R_USER="" R_PASS="" R_SPF="" R_LABEL="" R_USER_FIXED="" R_USER_LABEL="" R_PASS_LABEL="" R_REPLY="" R_CF_TOKEN=""
+CLOUD="" P25_STATE=""
+
+have_tty() { [ "$ASSUME_YES" != 1 ] && { : </dev/tty; } 2>/dev/null; }
+# Run a command with a time limit when timeout(1) exists (it does on every supported Linux).
+tmo() {
+  local t="$1"; shift
+  if command -v timeout >/dev/null 2>&1; then timeout "$t" "$@"
+  elif command -v gtimeout >/dev/null 2>&1; then gtimeout "$t" "$@"
+  else "$@"; fi
+}
+ask_secret() { # ask_secret VAR "Prompt"
+  local __v="$1" a=""
+  have_tty || { printf -v "$__v" '%s' ""; return; }
+  read -r -s -p "$2: " a </dev/tty || true
+  echo >/dev/tty
+  printf -v "$__v" '%s' "$a"
+}
+
+# First 3 bytes the server at host:port sends (empty on refused, filtered or silent).
+# shellcheck disable=SC2016  # $0/$1 belong to the inner bash
+tcp_banner() { tmo "${3:-6}" bash -c 'exec 3<>"/dev/tcp/$0/$1" && head -c 3 <&3' "$1" "$2" 2>/dev/null || true; }
+
+# Sets P25_STATE to open, blocked or nonet (no usable network or DNS, so the result says nothing about port 25).
+detect_port25() {
+  local -a hosts
+  local h resolved=0 port="${P25_PORT:-25}"
+  read -r -a hosts <<<"${P25_HOSTS:-gmail-smtp-in.l.google.com outlook-com.olc.protection.outlook.com mta5.am0.yahoodns.net}"
+  for h in "${hosts[@]}"; do
+    if [ "$(tcp_banner "$h" "$port" 6)" = 220 ]; then P25_STATE=open; return 0; fi
+    if getent hosts "$h" >/dev/null 2>&1 || [[ "$h" =~ ^[0-9.]+$ ]]; then resolved=1; fi
+  done
+  # Nothing answered. Blocked only if the network itself works (HTTPS to a well-known host).
+  # shellcheck disable=SC2016
+  if [ "$resolved" = 1 ] && tmo 5 bash -c 'exec 3<>"/dev/tcp/$0/$1"' "${P25_NET_HOST:-1.1.1.1}" "${P25_NET_PORT:-443}" 2>/dev/null; then P25_STATE=blocked
+  else P25_STATE=nonet; fi
+}
+
+dmi_text() {
+  local d="${DMI_DIR:-/sys/class/dmi/id}" f
+  for f in sys_vendor product_name board_vendor chassis_asset_tag bios_vendor; do
+    [ -r "$d/$f" ] && tr '[:upper:]' '[:lower:]' <"$d/$f" || true
+  done 2>/dev/null
+}
+# Sets CLOUD to azure, aws, gcp, digitalocean, hetzner, vultr, ovh, oracle, linode, contabo or empty.
+detect_cloud() {
+  local d md="${CLOUD_MD_HOST:-169.254.169.254}" t=""
+  CLOUD=""
+  d="$(dmi_text)"
+  case "$d" in
+    *7783-7084-3265-9085-8269-3286-77*) CLOUD=azure ;;
+    *amazon*) CLOUD=aws ;;
+    *google*) CLOUD=gcp ;;
+    *digitalocean*) CLOUD=digitalocean ;;
+    *hetzner*) CLOUD=hetzner ;;
+    *vultr*) CLOUD=vultr ;;
+    *ovh*) CLOUD=ovh ;;
+    *oraclecloud*) CLOUD=oracle ;;
+    *linode*|*akamai*) CLOUD=linode ;;
+    *contabo*) CLOUD=contabo ;;
+  esac
+  [ -n "$CLOUD" ] && return 0
+  command -v curl >/dev/null 2>&1 || return 0
+  if curl -fsS -m 1 -H 'Metadata:true' "http://$md/metadata/instance?api-version=2021-02-01" 2>/dev/null | grep -q azEnvironment; then CLOUD=azure
+  elif curl -fsS -m 1 -H 'Metadata-Flavor: Google' "http://$md/computeMetadata/v1/instance/id" >/dev/null 2>&1; then CLOUD=gcp
+  elif t="$(curl -fsS -m 1 -X PUT -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' "http://$md/latest/api/token" 2>/dev/null)" && [ -n "$t" ] \
+    && curl -fsS -m 1 -H "X-aws-ec2-metadata-token: $t" "http://$md/latest/meta-data/instance-id" 2>/dev/null | grep -q '^i-'; then CLOUD=aws
+  elif curl -fsS -m 1 "http://$md/hetzner/v1/metadata" >/dev/null 2>&1; then CLOUD=hetzner
+  elif curl -fsS -m 1 "http://$md/metadata/v1/id" 2>/dev/null | grep -q '^[0-9]'; then CLOUD=digitalocean
+  fi
+}
+cloud_explain() {
+  case "$CLOUD" in
+    azure) echo "Azure blocks outbound port 25 on most subscriptions (only Enterprise Agreement / MCA-E are exempt) and offers no unblock for the rest: use a relay." ;;
+    aws) echo "AWS EC2 throttles outbound port 25 by default. You can request removal (needs reverse DNS): https://aws.amazon.com/forms/ec2-email-limit-rdns-request  Or use a relay (Amazon SES)." ;;
+    gcp) echo "Google Cloud permanently blocks outbound port 25 (no exceptions): use a relay. https://cloud.google.com/compute/docs/tutorials/sending-mail" ;;
+    digitalocean) echo "DigitalOcean blocks port 25 on new accounts; support can lift it once the account has billing history (open a ticket), or use a relay." ;;
+    hetzner) echo "Hetzner Cloud blocks ports 25 and 465 by default; after your first paid invoice you can request unblocking (Cloud console > Limits), or use a relay." ;;
+    vultr) echo "Vultr blocks port 25 on new accounts; open a support ticket to request unblocking, or use a relay." ;;
+    ovh) echo "OVH normally allows port 25: check any firewall in front of the server, then ask OVH support, or use a relay." ;;
+    contabo) echo "Contabo may block port 25 on new VPS; request unblocking from support, or use a relay." ;;
+    oracle) echo "Oracle Cloud blocks outbound port 25 for most tenancies: use a relay." ;;
+    linode) echo "Linode (Akamai) blocks port 25 on new accounts until you ask support, or use a relay." ;;
+    *) echo "Your hosting provider (or a firewall) blocks outbound port 25. Ask them to unblock it, or use a relay." ;;
+  esac
+}
+
+# relay_preset NAME: sets R_LABEL R_HOST R_PORT R_USER_FIXED R_USER_LABEL R_PASS_LABEL R_SPF.
+relay_preset() {
+  R_SPF="" R_USER_FIXED="" R_USER_LABEL="SMTP username" R_PASS_LABEL="SMTP password"
+  case "$1" in
+    cloudflare) R_LABEL="Cloudflare Email Service"; R_HOST=smtp.mx.cloudflare.net; R_PORT=465; R_USER_FIXED=api_token
+      R_PASS_LABEL="Cloudflare API token (Email Sending: Edit; add Zone > DNS: Edit for automatic records)"; R_SPF=_spf.mx.cloudflare.net ;;
+    resend) R_LABEL="Resend"; R_HOST=smtp.resend.com; R_PORT=465; R_USER_FIXED=resend; R_PASS_LABEL="Resend API key"; R_SPF=amazonses.com ;;
+    ses) R_LABEL="Amazon SES (${RELAY_REGION:-us-east-1})"; R_HOST="email-smtp.${RELAY_REGION:-us-east-1}.amazonaws.com"; R_PORT=587
+      R_USER_LABEL="SES SMTP username"; R_PASS_LABEL="SES SMTP password"; R_SPF=amazonses.com ;;
+    postmark) R_LABEL="Postmark"; R_HOST=smtp.postmarkapp.com; R_PORT=587; R_USER_LABEL="Postmark Server API token"; R_PASS_LABEL="Postmark Server API token (again)"; R_SPF=spf.mtasv.net ;;
+    mailgun) R_LABEL="Mailgun"; R_HOST=smtp.mailgun.org; R_PORT=587; R_USER_LABEL="Mailgun SMTP login (postmaster@your-domain)"; R_SPF=mailgun.org ;;
+    brevo) R_LABEL="Brevo"; R_HOST=smtp-relay.brevo.com; R_PORT=587; R_USER_LABEL="Brevo SMTP login"; R_PASS_LABEL="Brevo SMTP key"; R_SPF=spf.brevo.com ;;
+    smtp2go) R_LABEL="SMTP2GO"; R_HOST=mail.smtp2go.com; R_PORT=2525; R_USER_LABEL="SMTP2GO username"; R_SPF=spf.smtp2go.com ;;
+    custom) R_LABEL="custom relay"; R_SPF="" ;;
+    *) return 1 ;;
+  esac
+}
+
+# relay_validate HOST PORT USER PASS: real SMTP connection + AUTH, no message sent.
+# Returns 0 when the server accepted the login; R_REPLY holds the server's refusal or the error.
+relay_validate() {
+  local host="$1" port="$2" user="$3" pass="$4" out="" b64 scheme
+  local -a args
+  R_REPLY=""
+  [ "${RELAY_SKIP_VALIDATE:-0}" = 1 ] && return 0
+  if command -v openssl >/dev/null 2>&1; then
+    if [ "$port" = 465 ] || [ "$port" = "${RELAY_IMPLICIT_PORT:-465}" ]; then args=(-connect "$host:$port"); else args=(-starttls smtp -connect "$host:$port"); fi
+    b64="$(printf '\0%s\0%s' "$user" "$pass" | base64 | tr -d '\n')"
+    out="$({ sleep 1; printf 'EHLO 5050-mail.local\r\n'; sleep 1
+      if [ -n "$user" ]; then printf 'AUTH PLAIN %s\r\n' "$b64"; sleep 2; fi
+      printf 'QUIT\r\n'; sleep 1; } | tmo 40 openssl s_client "${args[@]}" -servername "$host" -quiet 2>&1 | tr -d '\r' || true)"
+    if [ -n "$user" ]; then grep -q '^235' <<<"$out" && return 0; else grep -q '^250' <<<"$out" && return 0; fi
+    R_REPLY="$(grep -E '^[45][0-9][0-9]([ -]|$)' <<<"$out" | tail -n 1 || true)"
+  elif command -v curl >/dev/null 2>&1; then
+    scheme=smtp; [ "$port" = 465 ] && scheme=smtps
+    args=(-sS -v --max-time 30 --ssl-reqd)
+    [ -n "$user" ] && args+=(--user "$user:$pass")
+    if out="$(curl "${args[@]}" -X NOOP "$scheme://$host:$port" </dev/null 2>&1)"; then return 0; fi
+    out="$(tr -d '\r' <<<"$out")"
+    R_REPLY="$(grep -E '^< [45][0-9][0-9]' <<<"$out" | tail -n 1 | sed 's/^< //' || true)"
+  else
+    warn "Neither openssl nor curl found: cannot test the relay login; saving it unverified."
+    return 0
+  fi
+  [ -n "$R_REPLY" ] || R_REPLY="$(grep -iE 'errno|refused|timed out|timeout|unable|could not|failed' <<<"$out" | head -n 1 || true)"
+  [ -n "$R_REPLY" ] || R_REPLY="no SMTP response from $host:$port (is the port reachable from this server?)"
+  return 1
+}
+
+relay_menu() { # sets R_PRESET; returns 1 for "skip"
+  local c
+  echo
+  bold "Outbound mail relay"
+  cat <<'M'
+  1) Cloudflare Email Service  (API token with Email Sending: Edit; sets up the domain for you)
+  2) Resend                    (smtp.resend.com, API key)
+  3) Amazon SES                (pick a region)
+  4) Postmark
+  5) Mailgun
+  6) Brevo
+  7) SMTP2GO
+  8) Custom SMTP server
+  9) Skip (outgoing mail will queue until port 25 works)
+M
+  while :; do
+    read -r -p "Choose [1-9]: " c </dev/tty || return 1
+    case "$c" in
+      1) R_PRESET=cloudflare ;; 2) R_PRESET=resend ;; 3) R_PRESET=ses ;; 4) R_PRESET=postmark ;;
+      5) R_PRESET=mailgun ;; 6) R_PRESET=brevo ;; 7) R_PRESET=smtp2go ;; 8) R_PRESET=custom ;;
+      9|"") return 1 ;;
+      *) echo "Enter a number from 1 to 9."; continue ;;
+    esac
+    return 0
+  done
+}
+
+# relay_setup: choose (menu or flags), collect credentials, validate. Returns 0 configured, 1 skipped.
+relay_setup() {
+  local interactive=0 c
+  have_tty && interactive=1
+  R_PRESET="${ARG_RELAY_PRESET:-}"
+  [ -z "$R_PRESET" ] && [ -n "$ARG_RELAY_HOST" ] && R_PRESET=custom
+  while :; do
+    if [ -z "$R_PRESET" ]; then
+      [ "$interactive" = 1 ] || return 1
+      relay_menu || return 1
+    fi
+    if [ "$R_PRESET" = ses ] && [ -z "${RELAY_REGION:-}" ] && [ "$interactive" = 1 ]; then ask RELAY_REGION "AWS region of your SES account" "us-east-1"; fi
+    relay_preset "$R_PRESET" || die "Unknown relay '$R_PRESET' (use: $RELAY_PRESETS)"
+    R_USER="${ARG_RELAY_USER:-$R_USER_FIXED}" R_PASS="${ARG_RELAY_PASS:-}"
+    if [ "$R_PRESET" = custom ]; then
+      R_HOST="${ARG_RELAY_HOST:-}" R_PORT="${ARG_RELAY_PORT:-}"
+      [ -n "$R_HOST" ] || ask R_HOST "Relay host (e.g. smtp.example.com)" ""
+      [ -n "$R_PORT" ] || ask R_PORT "Relay port" "587"
+      [ -n "$R_HOST" ] || die "No relay host given."
+      [ -n "$R_USER" ] || ask R_USER "SMTP username (empty for none)" ""
+    else
+      [ -n "$ARG_RELAY_HOST" ] && R_HOST="$ARG_RELAY_HOST"
+      [ -n "$ARG_RELAY_PORT" ] && R_PORT="$ARG_RELAY_PORT"
+      [ -z "$R_USER" ] && [ "$interactive" = 1 ] && ask R_USER "$R_USER_LABEL" ""
+    fi
+    [ "$R_PRESET" = cloudflare ] && [ -z "$R_PASS" ] && R_PASS="${ARG_CF_TOKEN:-$(env_get CLOUDFLARE_API_TOKEN)}"
+    if [ -z "$R_PASS" ] && { [ -n "$R_USER" ] || [ "$R_PRESET" != custom ]; }; then
+      if [ "$interactive" = 1 ]; then ask_secret R_PASS "$R_PASS_LABEL"; fi
+    fi
+    [ "$R_PRESET" = postmark ] && [ -z "$R_USER" ] && R_USER="$R_PASS"
+    [[ "$R_PORT" =~ ^[0-9]+$ ]] || die "Relay port '$R_PORT' is not a number."
+    if [ "$R_PRESET" != custom ] || [ -n "$R_USER" ]; then
+      if [ -z "$R_USER" ] || [ -z "$R_PASS" ]; then
+        [ "$interactive" = 1 ] || die "Relay '$R_PRESET' needs credentials: --relay-user/--relay-password (or RELAY_USERNAME/RELAY_PASSWORD)."
+        warn "Both a username and a password/key are required."
+        ARG_RELAY_USER="" ARG_RELAY_PASS=""; continue
+      fi
+    fi
+    [ "$R_PRESET" = cloudflare ] && R_CF_TOKEN="$R_PASS"
+    info "Testing the login at $R_HOST:$R_PORT (no mail is sent)"
+    if relay_validate "$R_HOST" "$R_PORT" "$R_USER" "$R_PASS"; then
+      info "Relay accepted the login: ${R_LABEL:-$R_HOST}"
+      return 0
+    fi
+    warn "The relay did not accept the login. Server said: $R_REPLY"
+    [ "$interactive" = 1 ] || die "Fix the relay settings, or set RELAY_SKIP_VALIDATE=1 to save them anyway."
+    read -r -p "[r]etry credentials, [c]hoose another relay, save [a]nyway, [s]kip? [r] " c </dev/tty || c=s
+    ARG_RELAY_USER="" ARG_RELAY_PASS="" ARG_RELAY_HOST="$R_HOST" ARG_RELAY_PORT="$R_PORT"
+    case "$c" in
+      c|C) R_PRESET="" ARG_RELAY_HOST="" ARG_RELAY_PORT="" ;;
+      a|A) return 0 ;;
+      s|S) return 1 ;;
+    esac
+  done
+}
+
+relay_save() {
+  env_set RELAY_HOST "$R_HOST"
+  env_set RELAY_PORT "$R_PORT"
+  env_set RELAY_USERNAME "$R_USER"
+  env_set RELAY_PASSWORD "$R_PASS"
+  env_set RELAY_PRESET "$R_PRESET"
+  env_set RELAY_SPF_INCLUDE "$R_SPF"
+  if [ "$R_PRESET" = cloudflare ]; then env_set CLOUDFLARE_EMAIL_SENDING 1; fi
+}
+
+# relay_tool SUBCOMMAND [VAR=value ...]: server/relay.mjs inside the bootstrap container.
+relay_tool() {
+  local sub="$1"; shift
+  env "$@" docker compose --project-directory "$DIR/deploy" --env-file "$DIR/.env" -f "$DIR/deploy/docker-compose.yml" \
+    --profile tools run --rm -T --entrypoint node bootstrap /relay.mjs "$sub" </dev/null
+}
+spf_hint() {
+  [ -n "$R_SPF" ] || return 0
+  echo "  SPF: add include:$R_SPF to the SPF record of $DOMAIN (keep a single SPF record), e.g."
+  echo "       $DOMAIN  TXT  \"v=spf1 mx include:$R_SPF ~all\""
+}
+# After Stalwart is up and the DNS records exist: Cloudflare onboarding and the SPF include.
+relay_post() {
+  local cft; cft="$(env_get CLOUDFLARE_API_TOKEN)"
+  if [ "$R_PRESET" = cloudflare ]; then
+    relay_tool cf-onboard CLOUDFLARE_API_TOKEN="$R_CF_TOKEN" || warn "Could not set up $DOMAIN in Cloudflare Email Service automatically (the token needs Email Sending: Edit and Zone > DNS: Edit). Add the sending domain in the Cloudflare dashboard: Email > Email Sending."
+    cft="${cft:-$R_CF_TOKEN}"
+  fi
+  [ -n "$R_SPF" ] || return 0
+  if [ -n "$cft" ] && relay_tool spf CLOUDFLARE_API_TOKEN="$cft" RELAY_SPF_INCLUDE="$R_SPF"; then :; else spf_hint; fi
+}
+relay_retry() {
+  info "Retrying the queued mail"
+  relay_tool retry || warn "Stalwart's queue API did not accept the retry. Stalwart was restarted with the relay; queued mail is retried on its normal schedule (within the hour). See: docker compose ... logs stalwart"
+}
+# Configure Stalwart on an existing install and flush the queue.
+relay_apply() {
+  info "Applying the relay to Stalwart"
+  compose --profile tools run --rm -T bootstrap </dev/null
+  compose restart stalwart >/dev/null
+  wait_healthy stalwart 300
+  relay_retry
+  relay_post
+}
+# --- relay:end
+
 # ---------------------------------------------------------------- uninstall
 if [ "$MODE" = uninstall ]; then
   need_root
@@ -153,6 +432,36 @@ if [ "$MODE" = uninstall ]; then
 fi
 
 need_root
+
+if [ -n "$ARG_RELAY_PRESET" ]; then
+  case " $RELAY_PRESETS " in *" $ARG_RELAY_PRESET "*) ;; *) die "Unknown relay '$ARG_RELAY_PRESET' (use: $RELAY_PRESETS)" ;; esac
+  RELAY_FLAG=1
+fi
+INSTALLED=0
+[ -n "$(env_get BOOTSTRAPPED)" ] && INSTALLED=1
+
+if [ "$RELAY_TEST" = 1 ]; then
+  [ -n "$(env_get RELAY_HOST)" ] || [ -n "$ARG_RELAY_HOST" ] || die "No relay is configured in $DIR/.env."
+  R_HOST="${ARG_RELAY_HOST:-$(env_get RELAY_HOST)}" R_PORT="${ARG_RELAY_PORT:-$(env_get RELAY_PORT)}"
+  R_USER="${ARG_RELAY_USER:-$(env_get RELAY_USERNAME)}" R_PASS="${ARG_RELAY_PASS:-$(env_get RELAY_PASSWORD)}"
+  info "Testing the login at $R_HOST:${R_PORT:-587} (no mail is sent)"
+  if relay_validate "$R_HOST" "${R_PORT:-587}" "$R_USER" "$R_PASS"; then info "Relay accepted the login."; exit 0; fi
+  die "Relay refused: $R_REPLY"
+fi
+
+# Existing install: only (re)configure the relay, re-run the bootstrap and restart Stalwart.
+if [ "$RELAY_FLAG" = 1 ] && [ "$INSTALLED" = 1 ] && [ "$MODE" = install ]; then
+  [ -f "$DIR/server/relay.mjs" ] || die "This installation predates relay support: run $DIR/install.sh --upgrade first."
+  docker compose version >/dev/null 2>&1 || die "Docker Compose v2 is required."
+  DOMAIN="$(env_get MAIL_DOMAIN)"
+  relay_setup || { info "No relay configured; nothing changed."; exit 0; }
+  relay_save
+  relay_apply
+  echo
+  bold "Outbound relay: ${R_LABEL:-$R_HOST} ($R_HOST:$R_PORT)"
+  echo "  Test again: sudo $DIR/install.sh --relay-test"
+  exit 0
+fi
 
 # ---------------------------------------------------------------- Docker
 if ! command -v docker >/dev/null 2>&1; then
@@ -198,12 +507,12 @@ if [ -z "$DOMAIN" ]; then
   [ "$MODE" = upgrade ] && die "No MAIL_DOMAIN in $DIR/.env; install first."
   ask DOMAIN "Primary mail domain (e.g. example.com)" ""
 fi
-DOMAIN="$(printf '%s' "$DOMAIN" | tr 'A-Z' 'a-z')"
+DOMAIN="$(printf '%s' "$DOMAIN" | tr '[:upper:]' '[:lower:]')"
 valid_domain "$DOMAIN" || die "'$DOMAIN' is not a valid domain (pass --domain example.com)"
 
 ADMIN_EMAIL_V="${ARG_ADMIN_EMAIL:-$(env_get ADMIN_EMAIL)}"
 [ -n "$ADMIN_EMAIL_V" ] || ask ADMIN_EMAIL_V "Admin mailbox to create" "admin@$DOMAIN"
-ADMIN_EMAIL_V="$(printf '%s' "$ADMIN_EMAIL_V" | tr 'A-Z' 'a-z')"
+ADMIN_EMAIL_V="$(printf '%s' "$ADMIN_EMAIL_V" | tr '[:upper:]' '[:lower:]')"
 [[ "$ADMIN_EMAIL_V" =~ ^[a-z0-9._+-]+@[a-z0-9.-]+$ ]] || die "Invalid admin email '$ADMIN_EMAIL_V'"
 
 MAIL_HOST="${ARG_MAIL_HOST:-$(env_get MAIL_HOSTNAME)}"; MAIL_HOST="${MAIL_HOST:-mail.$DOMAIN}"
@@ -244,12 +553,6 @@ env_default WEB_CONCURRENCY "auto"
 [ -n "$ARG_SEND_TRANSPORT" ] && env_set SEND_TRANSPORT "$ARG_SEND_TRANSPORT"
 env_default SEND_TRANSPORT "smtp"
 [ -n "$ARG_CF_TOKEN" ] && env_set CLOUDFLARE_API_TOKEN "$ARG_CF_TOKEN"
-if [ -n "$ARG_RELAY_HOST" ]; then
-  env_set RELAY_HOST "$ARG_RELAY_HOST"
-  env_set RELAY_PORT "${ARG_RELAY_PORT:-587}"
-  env_set RELAY_USERNAME "$ARG_RELAY_USER"
-  env_set RELAY_PASSWORD "$ARG_RELAY_PASS"
-fi
 
 # Public address (DNS records + port 25 advice).
 PUBLIC_IPV4="$(env_get PUBLIC_IPV4)"
@@ -258,18 +561,27 @@ if [ -z "$PUBLIC_IPV4" ]; then
   [[ "$PUBLIC_IPV4" =~ ^[0-9.]+$ ]] && env_set PUBLIC_IPV4 "$PUBLIC_IPV4" || PUBLIC_IPV4=""
 fi
 
-# ---------------------------------------------------------------- port 25
-if [ "$SKIP_PORT25" = 0 ] && [ -z "$(env_get RELAY_HOST)" ] && [ "$TLS" = acme ]; then
+# ---------------------------------------------------------------- port 25 / relay
+if [ "$RELAY_FLAG" = 1 ] || [ -n "$ARG_RELAY_HOST" ]; then
+  if relay_setup; then relay_save; RELAY_CONFIGURED=1; else warn "No relay configured: outgoing mail will queue unless port 25 works."; fi
+elif [ "$SKIP_PORT25" = 0 ] && [ -z "$(env_get RELAY_HOST)" ] && [ "$TLS" = acme ]; then
   info "Checking outbound port 25"
-  if timeout 8 bash -c 'exec 3<>/dev/tcp/gmail-smtp-in.l.google.com/25 && head -c 3 <&3' 2>/dev/null | grep -q 220; then
-    info "Outbound port 25 is open: mail is delivered directly."
-  else
-    warn "Outbound port 25 looks BLOCKED (common on AWS, Azure, GCP, DigitalOcean by default)."
-    warn "Mail will queue and never leave this server until you either ask your provider to unblock"
-    warn "port 25 or configure a relay, e.g. re-run with:"
-    warn "  --relay-host smtp.example-relay.com --relay-port 587 --relay-user USER --relay-password PASS"
-    warn "(Any SMTP relay works: Amazon SES, Postmark, Mailgun, Cloudflare Email Service, ...)"
-  fi
+  detect_port25
+  case "$P25_STATE" in
+    open) info "Outbound port 25 is open: mail is delivered directly." ;;
+    nonet) warn "Could not test outbound port 25 (no network or DNS from this server). Re-check later with: $DIR/install.sh --relay-test" ;;
+    *)
+      detect_cloud
+      warn "Outbound port 25 is BLOCKED. Mail would queue and never leave this server."
+      warn "$(cloud_explain)"
+      if [ "$MODE" = install ] && have_tty; then
+        echo "Pick an outbound relay now (you can also do this later with: sudo $DIR/install.sh --relay)."
+        if relay_setup; then relay_save; RELAY_CONFIGURED=1; else warn "Skipped: mail will queue until port 25 is open or a relay is set up (install.sh --relay)."; fi
+      else
+        warn "Set up a relay with: install.sh --relay <cloudflare|resend|ses|postmark|mailgun|brevo|smtp2go> --relay-user USER --relay-password PASS"
+        warn "or interactively: sudo $DIR/install.sh --relay"
+      fi ;;
+  esac
 fi
 
 # ---------------------------------------------------------------- build + start
@@ -309,6 +621,11 @@ dns_args=(--print-dns)
 [ -n "$(env_get CLOUDFLARE_API_TOKEN)" ] && dns_args+=(--cloudflare)
 compose --profile tools run --rm -T bootstrap "${dns_args[@]}" </dev/null || warn "Could not print the DNS records; run: docker compose --env-file $DIR/.env -f $DIR/deploy/docker-compose.yml --profile tools run --rm bootstrap --print-dns"
 
+if [ "$RELAY_CONFIGURED" = 1 ]; then
+  relay_post
+  relay_retry
+fi
+
 # ---------------------------------------------------------------- summary
 echo
 bold "5050 Mail is running."
@@ -317,6 +634,7 @@ echo "  Settings:     $DIR/.env (mode 0600; keep a backup, it holds every secret
 echo "  Webmail:      https://$MAIL_HOST"
 echo "  Send:         https://$SEND_HOST   (dashboard, sign in with your mailbox)"
 echo "  Send API:     https://$API_HOST    (Resend-compatible)"
+[ "$RELAY_CONFIGURED" = 1 ] && echo "  Outbound:     via relay ${R_LABEL:-$R_HOST} ($R_HOST:$R_PORT); re-test: sudo $DIR/install.sh --relay-test"
 echo "  IMAP/SMTP:    $MAIL_HOST  993 (IMAPS), 465/587 (submission); Send SMTP relay on 2465/2587"
 if [ -n "$NEW_ADMIN_PASSWORD" ]; then
   echo
