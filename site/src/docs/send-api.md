@@ -181,9 +181,13 @@ Every authenticated response carries `ratelimit-limit`, `ratelimit-remaining`, `
 
 New teams get a quota of 50,000 emails per month and no daily limit (`SEND_DEFAULT_MONTHLY_QUOTA` in `.env`), which administrators change per team. Send responses report usage in `x-resend-monthly-quota`.
 
+## Email status
+
+`GET /emails/:id` returns `last_event`: `queued` or `scheduled`, then `sent` once your mail server has accepted the message, and after that `delivered`, `delivery_delayed`, `bounced`, `complained`, `opened`, `clicked`, `failed` or `suppressed`, whichever happened last. The mail server reports delivery outcomes itself, so this works with direct delivery and with any relay. See [delivery tracking](/docs/webhooks/#delivery-tracking).
+
 ## Differences from Resend
 
-- Mail is delivered by your own mail server (or your relay), so the sending IP's reputation is yours to build.
+- Mail is delivered by your own mail server (or your relay), so the sending IP's reputation is yours to build. Delivery outcomes come from that server, with any relay or direct delivery.
 - Domain records are your own DKIM key, SPF and DMARC instead of Resend's `send` subdomain and Amazon SES records.
 - `region`, `tls` and `custom_return_path` on domains are stored and returned but don't change routing.
 - Open and click tracking links use your API host (`PUBLIC_TRACKING_BASE`); custom tracking subdomains are verified but not yet served over TLS.

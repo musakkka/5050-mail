@@ -52,6 +52,24 @@ Endpoints must be `http` or `https` URLs on the public internet; private, loopba
 
 Bounces add `bounce { message, type, subType }`, clicks add `click { link, ipAddress, userAgent, timestamp }`, failures add `failed { reason }`.
 
+## Delivery tracking
+
+`email.sent` means the mail server accepted the message. What happens next is reported by the mail server itself: Stalwart posts every delivery outcome to 5050 Send over the internal Docker network, and Send turns them into the same events Resend sends. It works the same whether your server delivers directly on port 25 or through an [outbound relay](/docs/outbound-relay/); nothing outside the stack is involved.
+
+| Stalwart reports | Email status and event | Notes |
+|---|---|---|
+| Recipient server accepted the message | `delivered` / `email.delivered` | |
+| Permanent failure (DSN) | `bounced` / `email.bounced` | `bounce.type` is `Permanent`, `Transient` or `Undetermined`, with a `subType` (`General`, `NoEmail`, `MailboxFull`, `MessageTooLarge`, `ContentRejected`, …) and the server's `message`. |
+| Temporary failure, message rescheduled | `delivery_delayed` / `email.delivery_delayed` | Sent once per recipient, on the first deferral. A later `delivered` or `bounced` follows. |
+| The message was lost from the queue | `failed` / `email.failed` | `failed.reason` is `message_lost_in_mail_queue`. |
+
+- **Several recipients.** Events are per recipient: each address gets its own `delivered`, `bounced` or `delivery_delayed` event, and `data.to` holds just that address. An email's `last_event` is its newest event, as on Resend. The Emails page shows each recipient's events on the timeline.
+- **Hard bounces are suppressed.** A `Permanent` bounce adds the address to the team's [suppression list](/docs/send-api/#endpoints) (`suppression.added`, origin `bounce`), so later sends to it are skipped with `email.suppressed`. Transient bounces are not suppressed.
+- **No duplicates.** Every event is recorded once per email and recipient, so Stalwart retrying a delivery of the same batch changes nothing. If Send is down, Stalwart keeps retrying for an hour.
+- **Relays.** With a relay, `delivered` means the relay accepted the message. Later failures at the relay come back as bounce messages to the envelope sender and are not tracked.
+
+The webhook is set up by `install.sh` (the `bootstrap` step) and authenticated with `STALWART_EVENTS_SECRET`. The endpoint, `POST /internal/stalwart-events`, answers only on the internal network, not on the public API or dashboard hostnames. After upgrading an existing server, add the secret to `.env` (`openssl rand -hex 32`) and run the bootstrap step again.
+
 ## Verify signatures
 
 Every request carries three headers, in the [Standard Webhooks](https://www.standardwebhooks.com/) format that Svix uses:

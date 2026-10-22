@@ -112,6 +112,7 @@ Also ask your VPS provider to set the **reverse DNS (PTR)** of the server IP to 
 - Resend-compatible REST API: the official SDKs work after changing the base URL. Covers emails (including batch and scheduled), domains, API keys, contacts, audiences, broadcasts, templates, webhooks, inbound and more. See [apps/send/docs](apps/send/docs).
 - SMTP relay: username `resend`, password = an API key.
 - Every sending domain gets its own DKIM key, and Send signs mail before handing it to Stalwart for delivery. Domains are verified against public DNS.
+- Delivery tracking: Stalwart reports every outcome (delivered, bounced, deferred) to Send, so emails move from `sent` to `delivered` / `bounced` / `delivery_delayed` and hard bounces are suppressed, whether mail goes out directly on port 25 or through a relay. No Cloudflare needed.
 - Open and click tracking, unsubscribe links, suppressions, webhooks with Svix-style signatures.
 - Multi-team dashboard: sign in with your mailbox, and Stalwart admins manage teams, quotas and rate limits.
 

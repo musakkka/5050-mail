@@ -114,7 +114,8 @@ export class LogTransport implements Transport {
  * SMTP submission to the local mail server (self-hosted default): 5050 Send hands
  * the finished MIME to Stalwart on its internal relay port; Stalwart DKIM-signs,
  * queues and delivers (direct MX or the configured smarthost). Accepted recipients
- * are reported as queued (status "sent"); 5xx rejections are permanent bounces.
+ * are reported as queued (status "sent"); 5xx rejections are permanent bounces. The final outcome
+ * comes back from Stalwart's webhook (services/stalwartEvents.ts), correlated by the queue id in the 250 reply.
  */
 export class SmtpTransport implements Transport {
   readonly name = 'smtp';

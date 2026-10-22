@@ -10,8 +10,9 @@ JSON, status codes, `ratelimit-*` headers and pagination follow Resend.
  SMTP clients ──► smtp.example.com:2465/2587 ─► smtp role ─┐
                                                               ├─► Postgres send (core-1)
                          worker role ◄── jobs / LISTEN ───────┘
-                              │  MIME (nodemailer) ─► Cloudflare Email Sending (send_raw)
-                              │  delivery outcomes ◄─ Cloudflare GraphQL analytics (emailSendingAdaptive)
+                              │  MIME (nodemailer) ─► Stalwart :2525 (self-hosted) or Cloudflare Email Sending (send_raw)
+                              │  delivery outcomes ◄─ Stalwart webhook POST /internal/stalwart-events (self-hosted)
+                              │                    or Cloudflare GraphQL analytics (emailSendingAdaptive)
                               └► webhooks (Svix signatures) → customer endpoints
 ```
 

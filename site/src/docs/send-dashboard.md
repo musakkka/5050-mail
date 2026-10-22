@@ -19,7 +19,7 @@ Mail server administrators are dashboard administrators. They can create teams, 
 
 | Page | What it is for |
 |---|---|
-| Emails | Every email sent or received, with its status timeline, filters by status, API key and date, the rendered message and the raw MIME source. |
+| Emails | Every email sent or received, with its status timeline (sent, delivered, bounced, delayed, per recipient), filters by status, API key and date, the rendered message and the raw MIME source. |
 | Templates | Reusable templates with variables, published and versioned, used by `template` in `POST /emails`. |
 | Audience | Contacts, segments, topics and contact properties; CSV import. |
 | Inboxes | Receiving inboxes with threads, labels and drafts (labs feature, switched on per team in Settings). |

@@ -25,7 +25,8 @@ The services are `caddy`, `stalwart`, `webmail`, `send-web`, `send-worker`, `sen
    ```
    A timeout means your provider blocks it. Ask them to lift the block, or [send through a relay](/docs/requirements/#send-through-a-relay).
 2. **Is the message stuck in the queue?** The admin console's **Overview → Outbound mail** shows queued messages and the last error for each. A `4xx` error is retried automatically; a `5xx` is final and comes back to the sender as a bounce.
-3. **Does the receiver reject you?** Read the bounce message. `550 5.7.1` and similar usually name the reason: missing PTR, SPF fail, a blocklisted IP.
+3. **What does Send say?** The email's timeline in the Send dashboard shows `delivered`, `delivery_delayed` or `bounced` for each recipient, with the receiving server's message. An email stuck at `sent` means no outcome has arrived yet, or `STALWART_EVENTS_SECRET` is missing from `.env` (see [delivery tracking](/docs/webhooks/#delivery-tracking)).
+4. **Does the receiver reject you?** Read the bounce message. `550 5.7.1` and similar usually name the reason: missing PTR, SPF fail, a blocklisted IP.
 
 ## Mail lands in spam
 

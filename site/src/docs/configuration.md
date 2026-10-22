@@ -68,6 +68,7 @@ Generated once by the installer, never overwritten.
 | `STALWART_DB_PASSWORD`, `SEND_DB_PASSWORD`, `WEBMAIL_DB_PASSWORD` | One database user each for the mail server, 5050 Send and the webmail |
 | `STALWART_ADMIN` | Mail server recovery admin, `user:password`. Only reachable on the internal network. |
 | `WEBMAIL_SESSION_SECRET`, `SEND_SESSION_SECRET` | Session and signing keys |
+| `STALWART_EVENTS_SECRET` | Shared secret the mail server presents when it reports delivery outcomes to 5050 Send. If it is empty, [delivery tracking](/docs/webhooks/#delivery-tracking) is off and emails stay at `sent`. |
 
 ## Outbound delivery
 
