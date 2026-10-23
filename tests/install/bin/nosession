@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Run a command in a new session, so it has no controlling terminal (/dev/tty fails). Test use only."""
+import os
+import sys
+
+os.setsid()
+os.execvp(sys.argv[1], sys.argv[1:])

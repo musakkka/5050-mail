@@ -190,7 +190,7 @@ confirm() {
   ask_yn "$1" n
 }
 rand() { head -c 64 /dev/urandom | od -An -tx1 | tr -d ' \n' | head -c "${1:-40}"; }
-need_root() { [ "$(id -u)" = 0 ] || die "This installer must run as root." "Use: curl -fsSL https://raw.githubusercontent.com/musakkka/5050-mail/main/install.sh | sudo bash"; }
+need_root() { [ "$(id -u)" = 0 ] || [ "${FIVEFIFTY_TEST_NOROOT:-}" = 1 ] || die "This installer must run as root." "Use: curl -fsSL https://raw.githubusercontent.com/musakkka/5050-mail/main/install.sh | sudo bash"; }
 valid_domain() { [[ "$1" =~ ^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$ ]]; }
 valid_domain_ci() { valid_domain "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"; }
 valid_email() { [[ "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')" =~ ^[a-z0-9._+-]+@([a-z0-9-]+\.)+[a-z]{2,}$ ]]; }
@@ -364,7 +364,7 @@ cloud_explain() {
 relay_preset() {
   R_SPF="" R_USER_FIXED="" R_USER_LABEL="SMTP username" R_PASS_LABEL="SMTP password"
   case "$1" in
-    cloudflare) R_LABEL="Cloudflare Email Service"; R_HOST=smtp.mx.cloudflare.net; R_PORT=465; R_USER_FIXED=api_token
+    cloudflare) R_LABEL="Cloudflare Email Sending"; R_HOST=smtp.mx.cloudflare.net; R_PORT=465; R_USER_FIXED=api_token
       R_PASS_LABEL="Cloudflare API token (Account > Email Sending > Edit; add Zone > DNS > Edit for automatic records)"; R_SPF=_spf.mx.cloudflare.net ;;
     resend) R_LABEL="Resend"; R_HOST=smtp.resend.com; R_PORT=465; R_USER_FIXED=resend; R_PASS_LABEL="Resend API key"; R_SPF=amazonses.com ;;
     ses) R_LABEL="Amazon SES (${RELAY_REGION:-us-east-1})"; R_HOST="email-smtp.${RELAY_REGION:-us-east-1}.amazonaws.com"; R_PORT=587
@@ -753,7 +753,7 @@ cf_show() { # reads cfdns lines on stdin
       *) sym="${YLW}!${RST}" ;;
     esac
     if [ "$act" = error ]; then printf '    %s %s\n' "$sym" "$note"; continue; fi
-    printf '    %s %-5s %-34.34s %s\n' "$sym" "$type" "$name" "${note:-${content:0:48}}"
+    printf '    %s %-5s %-46.46s %s\n' "$sym" "$type" "$name" "${note:-${content:0:48}}"
   done
 }
 
@@ -785,22 +785,25 @@ dns_table() { # TSV file
   done <"$1"
 }
 dns_wait() { # TSV file: re-check until every record resolves, or the user skips
-  local type name value bad k n=0 tool=1
+  local type name value bad k n=0 tool=1 i seen=""
   command -v dig >/dev/null 2>&1 || command -v host >/dev/null 2>&1 || [ -n "${FIVEFIFTY_DNS_RESOLVER:-}" ] || tool=0
   if [ "$tool" = 0 ]; then info "Install dnsutils (or bind-utils) and the installer can check DNS for you. For now use Domains > Check DNS in the admin console."; return 0; fi
   while :; do
-    bad=0; n=$((n + 1))
+    bad=0; n=$((n + 1)); i=0
     while IFS=$'\t' read -r type name value; do
       [ -n "$type" ] || continue
+      i=$((i + 1))
       if dns_has "$type" "$name" "$value"; then
-        [ "$n" = 1 ] && printf '    %s%s%s %-5s %s\n' "$GRN" "$S_OK" "$RST" "$type" "$name"
+        # Print a record once: on the first pass, or when it starts to resolve.
+        case " $seen " in *" $i "*) ;; *) seen="$seen $i"; printf '    %s%s%s %-5s %s\n' "$GRN" "$S_OK" "$RST" "$type" "$name" ;; esac
       else
-        bad=$((bad + 1)); printf '    %s%s%s %-5s %s\n' "$RED" "$S_ERR" "$RST" "$type" "$name"
+        bad=$((bad + 1))
+        [ "$n" = 1 ] && printf '    %s%s%s %-5s %s\n' "$RED" "$S_ERR" "$RST" "$type" "$name"
       fi
     done <"$1"
     if [ "$bad" = 0 ]; then good "Every record resolves."; return 0; fi
     have_tty || { info "$bad record(s) do not resolve yet. DNS changes can take a few minutes."; return 0; }
-    tty_out "  $bad not visible yet. Checking again in 20 seconds. ${B}Enter$RST check now, ${B}s$RST skip: "
+    tty_out "  $bad not visible yet. Checking again in 20 seconds. ${B}Enter${RST} check now, ${B}s${RST} skip: "
     k=""; read -r -t 20 -n 1 k </dev/tty || true
     echo >/dev/tty
     case "$k" in s|S) info "Skipped. Domains > Check DNS in the admin console checks again."; return 0 ;; esac

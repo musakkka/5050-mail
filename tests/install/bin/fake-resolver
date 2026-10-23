@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# DNS lookups for install.sh in tests: nothing resolves, unless FAKE_RESOLVES is set.
+[ -n "${FAKE_RESOLVES:-}" ] && { case "$1" in A) echo 203.0.113.10 ;; MX) echo "10 mail.example.com." ;; TXT) echo '"v=spf1 mx -all" "v=DKIM1; k=ed25519" "v=DMARC1; p=reject" "v=TLSRPTv1"' ;; esac; }
+exit 0

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# A stand-in for `docker` used by tests/install/ux-test.sh. It answers the calls install.sh makes,
+# and runs server/cfdns.mjs and server/relay.mjs on the host (against the fake Cloudflare API).
+set -u
+repo="$(cd "$(dirname "$0")/../../.." && pwd)"
+[ -n "${FAKE_DOCKER_LOG:-}" ] && printf '%s\n' "docker $*" >>"$FAKE_DOCKER_LOG"
+case "${1:-}" in
+  info) exit 0 ;;
+  inspect) echo healthy; exit 0 ;;
+  volume) exit 0 ;;
+  compose) shift ;;
+  *) exit 0 ;;
+esac
+envfile="" ; sub=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    version) exit 0 ;;
+    --project-directory|-f|--profile) shift 2 ;;
+    --env-file) envfile="$2"; shift 2 ;;
+    build|pull|up|restart|ps|logs|down|run) sub="$1"; shift; break ;;
+    *) shift ;;
+  esac
+done
+case "$sub" in
+  ps) [ "${1:-}" = -q ] && echo cid; exit 0 ;;
+  run) ;;
+  *) exit 0 ;;
+esac
+# docker compose run: load the .env file, apply -e flags, then pick the tool.
+if [ -n "$envfile" ] && [ -f "$envfile" ]; then
+  while IFS='=' read -r k v; do [[ "$k" =~ ^[A-Z_0-9]+$ ]] && export "$k=$v"; done <"$envfile"
+fi
+export MAIL_HOSTNAME="${MAIL_HOSTNAME:-mail.$MAIL_DOMAIN}"
+entry=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --rm|-T) shift ;;
+    -e) case "$2" in *=*) export "${2?}" ;; esac; shift 2 ;;
+    --entrypoint) entry="$2"; shift 2 ;;
+    bootstrap) shift; break ;;
+    *) shift ;;
+  esac
+done
+if [ "$entry" = node ]; then
+  tool="$1"; shift
+  exec node "$repo/server/$(basename "$tool")" "$@"
+fi
+case "$*" in
+  *--print-dns*--tsv*|*--tsv*)
+    d="$MAIL_DOMAIN"; ip="${PUBLIC_IPV4:-203.0.113.10}"
+    printf 'A\tmail.%s\t%s\nA\tsend.%s\t%s\nA\tapi.%s\t%s\n' "$d" "$ip" "$d" "$ip" "$d" "$ip"
+    printf 'MX\t%s\t10 mail.%s.\n' "$d" "$d"
+    printf 'TXT\t%s\tv=spf1 mx -all\n' "$d"
+    printf 'TXT\tv1-ed25519-20261023._domainkey.%s\tv=DKIM1; k=ed25519; h=sha256; p=AAAAC3NzaC1lZDI1NTE5AAAAIEXAMPLEKEY000000000000000000000000000=\n' "$d"
+    printf 'TXT\tv1-rsa-20261023._domainkey.%s\tv=DKIM1; k=rsa; h=sha256; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAEXAMPLE%s\n' "$d" "$(printf 'x%.0s' $(seq 1 300))"
+    printf 'TXT\t_dmarc.%s\tv=DMARC1; p=reject; rua=mailto:postmaster@%s\n' "$d" "$d"
+    printf 'TXT\t_smtp._tls.%s\tv=TLSRPTv1; rua=mailto:postmaster@%s\n' "$d" "$d"
+    ;;
+  *) echo "bootstrap: ok" ;;
+esac
+exit 0
