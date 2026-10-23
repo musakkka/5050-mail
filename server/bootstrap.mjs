@@ -8,7 +8,7 @@
  * recovery admin (STALWART_ADMIN=user:password). No dependencies; Node >= 20.
  *
  *   docker compose run --rm bootstrap          (what install.sh does)
- *   node server/bootstrap.mjs --print-dns [--cloudflare] [--json]   (print the DNS records; create missing ones in Cloudflare)
+ *   node server/bootstrap.mjs --print-dns [--cloudflare] [--json] [--tsv]   (print the DNS records; create missing ones in Cloudflare)
  *
  * Environment (see .env.example):
  *   STALWART_URL            http://stalwart:8080
@@ -407,6 +407,11 @@ async function dnsRecords(domainId) {
 
 async function printDns(domainId) {
   const recs = await dnsRecords(domainId);
+  if (args.has('--tsv')) {
+    // Machine-readable for install.sh: TYPE<TAB>NAME<TAB>VALUE per line, nothing else.
+    for (const r of recs) console.log(`${r.type}\t${r.name}\t${r.value}`);
+    return;
+  }
   const w = Math.max(...recs.map((r) => r.name.length));
   console.log('');
   console.log(`DNS records for ${DOMAIN} (add them at your DNS provider; TTL 300-3600):`);

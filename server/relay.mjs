@@ -15,7 +15,7 @@ const log = (m) => console.log(`relay: ${m}`);
 const cmd = process.argv[2];
 
 async function cf(method, path, body) {
-  const r = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
+  const r = await fetch(`${env.CLOUDFLARE_API_BASE || 'https://api.cloudflare.com/client/v4'}${path}`, {
     method,
     headers: { Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`, 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,

@@ -243,6 +243,7 @@ services:
     volumes:
       - ../server/bootstrap.mjs:/bootstrap.mjs:ro
       - ../server/relay.mjs:/relay.mjs:ro
+      - ../server/cfdns.mjs:/cfdns.mjs:ro
     entrypoint: ["node", "/bootstrap.mjs"]
     environment:
       STALWART_URL: http://stalwart:8080
