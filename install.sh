@@ -33,7 +33,7 @@ ARG_MAIL_HOST="" ARG_SEND_HOST="" ARG_API_HOST=""
 REPLACE_MX="${REPLACE_MX:-0}"
 STEP_N=0 STEP_TOTAL=0 LOG=/dev/null
 CF_TOKEN="" CF_ON=0 CF_ZONE_ID="" CF_ZONE_NAME="" CF_HAS_SEND=0 CF_NEED_SEND=0 CF_FROM_FLAG=0
-DNS_CHANGES=""
+DNS_CHANGES="" DNS_OK=0 DNS_PENDING=0
 [ -n "$ARG_CF_TOKEN" ] && CF_FROM_FLAG=1
 
 usage() {
@@ -657,8 +657,8 @@ token_help() {
          Zone     DNS            Edit
          Zone     Zone           Read
          Account  Email Sending  Edit    ($sending)
-    3. Zone Resources: Include > Specific zone > $DOMAIN
-       (the zone, not a subdomain; this keeps the token to one zone)
+    3. Zone Resources: Include > Specific zone > the zone that holds $DOMAIN
+       (the registered domain, for example example.com; this keeps the token to one zone)
     4. Continue to summary, Create Token, and copy the secret. Cloudflare shows it once.
 
     The installer checks the token by creating and deleting one TXT record
@@ -802,7 +802,7 @@ dns_wait() { # TSV file: re-check until every record resolves, or the user skips
         [ "$n" = 1 ] && printf '    %s%s%s %-5s %s\n' "$RED" "$S_ERR" "$RST" "$type" "$name"
       fi
     done <"$1"
-    if [ "$bad" = 0 ]; then good "Every record resolves."; return 0; fi
+    if [ "$bad" = 0 ]; then good "Every record resolves."; DNS_OK=1; return 0; fi
     have_tty || { info "$bad record(s) do not resolve yet. DNS changes can take a few minutes."; return 0; }
     tty_out "  $bad not visible yet. Checking again in 20 seconds. ${B}Enter${RST} check now, ${B}s${RST} skip: "
     k=""; read -r -t 20 -n 1 k </dev/tty || true
@@ -865,16 +865,24 @@ summary() {
     box_kv "Password" "unchanged (set on first install)"
   fi
   box_text ""
-  box_kv "Mail apps" "IMAP $MAIL_HOST:993 (SSL)   SMTP $MAIL_HOST:465 (SSL) or :587 (STARTTLS)"
-  box_kv "" "User name: the full address. Send SMTP relay: :2465 / :2587, user resend."
+  box_kv "Mail apps" "IMAP $MAIL_HOST:993 (SSL)"
+  box_kv "" "SMTP $MAIL_HOST:465 (SSL) or :587 (STARTTLS)"
+  box_kv "" "User name: the full address."
+  box_kv "Send SMTP" ":2465 / :2587, user resend"
   [ "$RELAY_CONFIGURED" = 1 ] && box_kv "Outbound" "via ${R_LABEL:-$R_HOST} ($R_HOST:$R_PORT). Test: sudo $DIR/install.sh --relay-test"
   if [ -n "$DNS_CHANGES" ]; then box_text ""; box_kv "DNS changed" "$(dns_changes_line)"; fi
   box_text ""
   box_text "${B}Next${RST}"
-  box_text "  1. Sign in at https://$MAIL_HOST/admin and add your users."
-  box_text "  2. More domains: Admin console > Domains > Add a domain."
-  box_text "  3. Create a Send API key: https://$SEND_HOST > API keys."
-  box_text "  4. Ask your VPS provider to set reverse DNS (PTR) of ${PUBLIC_IPV4:-the server IP} to $MAIL_HOST."
+  local n=0
+  if [ "$DNS_PENDING" = 1 ]; then
+    n=$((n + 1)); box_text "  $n. Add the DNS records listed above, then check them in Admin console > Domains."
+    n=$((n + 1)); box_text "  $n. Once they resolve, get the HTTPS certificates: cd $DIR/deploy && sudo docker compose --env-file ../.env restart caddy"
+  fi
+  if [ "$P25_STATE" = blocked ] && [ "$RELAY_CONFIGURED" != 1 ]; then n=$((n + 1)); box_text "  $n. Outgoing mail waits in the queue until you set a relay: sudo $DIR/install.sh --relay"; fi
+  n=$((n + 1)); box_text "  $n. Sign in at https://$MAIL_HOST/admin and add your users."
+  n=$((n + 1)); box_text "  $n. More domains: Admin console > Domains > Add a domain."
+  n=$((n + 1)); box_text "  $n. Create a Send API key: https://$SEND_HOST > API keys."
+  n=$((n + 1)); box_text "  $n. Ask your VPS provider to set reverse DNS (PTR) of ${PUBLIC_IPV4:-the server IP} to $MAIL_HOST."
   box_text ""
   box_kv "Logs" "$LOG"
   box_kv "Settings" "$DIR/.env  (secrets, mode 0600: back it up)"
@@ -989,6 +997,13 @@ step_dns() {
     info "On Cloudflare? Set the A records to DNS only (grey cloud), not Proxied."
     say
     dns_wait "$tsv"
+  fi
+  # Caddy asked for its certificates while the names did not exist yet and then backs off for a long time.
+  # Restart it once the names resolve so HTTPS works straight away.
+  if [ "$CF_ON" = 1 ] || [ "$DNS_OK" = 1 ]; then
+    spin "Request the HTTPS certificates" compose restart caddy || warn "Could not restart Caddy. Run: cd $DIR/deploy && sudo docker compose --env-file ../.env restart caddy"
+  else
+    DNS_PENDING=1
   fi
   rm -f "$tsv"
 }

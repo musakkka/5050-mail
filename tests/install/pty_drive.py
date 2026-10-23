@@ -4,7 +4,7 @@
   pty_drive.py OUTFILE [--timeout N] [--step 'REGEX::TEXT' ...] -- command args...
 
 Each --step waits until REGEX shows up in the output produced since the previous step, then types
-TEXT and Enter (TEXT may be empty; a trailing '^' sends the text without Enter). Steps run in order.
+TEXT and Enter (TEXT may be empty or @env:NAME to read it from the environment; a trailing '^' sends the text without Enter). Steps run in order.
 The full output is written to OUTFILE. Exit status: the command's, or 99 when a step timed out.
 """
 import os
@@ -28,11 +28,18 @@ def main():
             timeout = int(args.pop(0))
         elif a == "--step":
             rx, _, text = args.pop(0).partition("::")
+            if text.startswith("@env:"):  # take the text from an environment variable (secrets stay off the command line)
+                text = os.environ[text[5:]]
             steps.append((re.compile(rx), text))
     cmd = args[1:]
     pid, fd = pty.fork()
     if pid == 0:
         os.execvp(cmd[0], cmd)
+    try:  # a real terminal size, so ssh and spinners behave
+        import fcntl, struct, termios
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 110, 0, 0))
+    except Exception:
+        pass
     buf, mark, status, deadline = b"", 0, None, time.time() + timeout
     log = open(out, "wb")
     while time.time() < deadline:

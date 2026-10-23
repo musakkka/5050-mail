@@ -65,6 +65,7 @@ check "happy: summary has admin URL" 'has "$OUT" "https://mail.example.com/admin
 check "happy: summary has Send URLs" 'has "$OUT" "https://send.example.com" && has "$OUT" "https://api.example.com"'
 check "happy: one-time password shown with warning" 'has "$OUT" "Password +[a-f0-9]{20}" && has "$OUT" "Shown once"'
 check "happy: DNS changed line" 'has "$OUT" "DNS changed.*\+MX.*\+A mail.*\+SPF.*\+DKIM x2.*\+DMARC"'
+check "happy: Caddy restarted after the DNS records exist" 'has "$OUT" "Request the HTTPS certificates"'
 check "happy: logs location" 'has "$OUT" "install.log"'
 check "happy: log file written" '[ -s "$C/opt/install.log" ]'
 check "happy: token not printed" '! grep -q tok_full "$OUT" && ! grep -q tok_full "$C/opt/install.log"'
