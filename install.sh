@@ -703,7 +703,8 @@ cf_wizard() {
     elif [ -z "$CF_ZONES" ]; then
       CF_MISSING="Zone Resources: the token cannot see any zone (include $DOMAIN or all zones)"$'\n'
     elif cf_pick_zone; then
-      good "Zone $CF_ZONE_NAME holds $DOMAIN (the token sees $(grep -c . <<<"$CF_ZONES") zone(s))"
+      good "Zone $CF_ZONE_NAME holds $DOMAIN"
+      if [ "$(grep -c . <<<"$CF_ZONES")" -gt 1 ]; then info "This token can see $(grep -c . <<<"$CF_ZONES") zones. Limiting it to $CF_ZONE_NAME (Zone Resources) is safer."; fi
     elif cf_choose_zone; then
       good "Using zone $CF_ZONE_NAME"
     else
@@ -837,6 +838,12 @@ box_rule() { printf '  %s%s%s' "$D" "$1" "$RST"; local i; for ((i = 0; i < 70; i
 box_text() { printf '  %s%s%s  %s\n' "$D" "$BOX_V" "$RST" "$*"; }
 box_kv() { printf '  %s%s%s  %s%-15s%s %s\n' "$D" "$BOX_V" "$RST" "$B" "$1" "$RST" "$2"; }
 
+# "+MX, +A mail, +DKIM, +DKIM" becomes "+MX, +A mail, +DKIM x2".
+dns_changes_line() {
+  printf '%s' "$DNS_CHANGES" | tr ',' '\n' | sed 's/^ *//' |
+    awk 'NF { if (!($0 in c)) o[++n] = $0; c[$0]++ } END { for (i = 1; i <= n; i++) printf "%s%s%s", (i > 1 ? ", " : ""), o[i], (c[o[i]] > 1 ? " x" c[o[i]] : "") }'
+}
+
 summary() {
   say
   box_rule "$BOX_TL"
@@ -861,7 +868,7 @@ summary() {
   box_kv "Mail apps" "IMAP $MAIL_HOST:993 (SSL)   SMTP $MAIL_HOST:465 (SSL) or :587 (STARTTLS)"
   box_kv "" "User name: the full address. Send SMTP relay: :2465 / :2587, user resend."
   [ "$RELAY_CONFIGURED" = 1 ] && box_kv "Outbound" "via ${R_LABEL:-$R_HOST} ($R_HOST:$R_PORT). Test: sudo $DIR/install.sh --relay-test"
-  if [ -n "$DNS_CHANGES" ]; then box_text ""; box_kv "DNS changed" "${DNS_CHANGES%, }"; fi
+  if [ -n "$DNS_CHANGES" ]; then box_text ""; box_kv "DNS changed" "$(dns_changes_line)"; fi
   box_text ""
   box_text "${B}Next${RST}"
   box_text "  1. Sign in at https://$MAIL_HOST/admin and add your users."
