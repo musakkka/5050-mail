@@ -21,7 +21,7 @@ You need:
 - Ideally, outbound port 25 open. Many clouds block it; see [Outbound mail](#outbound-mail).
 
 ```sh
-# Interactive: asks for the domain and the admin mailbox
+# Interactive: explains what it will do, then asks for the domain and the admin mailbox
 curl -fsSL https://raw.githubusercontent.com/musakkka/5050-mail/main/install.sh | sudo bash
 
 # Non-interactive
@@ -32,19 +32,24 @@ curl -fsSL https://raw.githubusercontent.com/musakkka/5050-mail/main/install.sh 
 ... | sudo bash -s -- --domain example.com --cloudflare-token "$CF_TOKEN" --yes
 ```
 
-The installer:
+Before it changes anything, the installer says what it will install, which ports the containers use, where the secrets are kept (`/opt/5050-mail/.env`, mode 0600), that nothing is sent to us, and how to uninstall. It asks once whether to continue (`--yes` skips the question).
+
+Then it:
 
 1. Installs Docker if it's missing.
-2. Generates every secret into `/opt/5050-mail/.env` (mode 0600).
-3. Builds the images and starts the stack.
+2. Asks whether your domain's DNS is on Cloudflare. If yes, it shows how to create the token and does the DNS for you. If no, it prints the records and checks them once you've added them.
+3. Builds the images and starts the stack, as numbered steps with a spinner. The full output is in `/opt/5050-mail/install.log`.
 4. Creates the first domain and the admin mailbox.
-5. Prints the DNS records to add, or creates them itself if you passed a Cloudflare token.
+5. Ends with a summary: webmail, admin console, 5050 Send, the admin mailbox and its one-time password, mail-app settings, and what it changed in your DNS.
+
+The Cloudflare token needs **Zone > DNS > Edit** and **Zone > Zone > Read**, ideally limited to your zone, plus **Account > Email Sending > Edit** if you send through Cloudflare. It is used only for your zone's DNS and Email Sending, stored only in `.env`, and you can revoke it any time. Details: [Cloudflare token](site/src/docs/dns.md#cloudflare-token).
 
 Re-running it is safe. Once your DNS records are in place:
 
 | | |
 |---|---|
-| Webmail + admin console | `https://mail.example.com` |
+| Webmail | `https://mail.example.com` |
+| Admin console | `https://mail.example.com/admin` |
 | Send dashboard | `https://send.example.com` (sign in with your mailbox) |
 | Send API | `https://api.example.com` (Resend-compatible) |
 | IMAP / SMTP | `mail.example.com`, 993 / 465 / 587 |

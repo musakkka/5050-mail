@@ -13,7 +13,7 @@ The installer checks port 25 by connecting to three large mail providers. If it 
 
 | Relay | `--relay` | Server | Username | Password | SPF include |
 |---|---|---|---|---|---|
-| Cloudflare Email Service | `cloudflare` | `smtp.mx.cloudflare.net:465` | `api_token` | API token with **Email Sending: Edit** (add **Zone > DNS: Edit** for automatic records) | `_spf.mx.cloudflare.net` |
+| Cloudflare Email Service | `cloudflare` | `smtp.mx.cloudflare.net:465` | `api_token` | API token with **Account > Email Sending > Edit** (add **Zone > DNS > Edit** for automatic records) | `_spf.mx.cloudflare.net` |
 | Resend | `resend` | `smtp.resend.com:465` | `resend` | API key | `amazonses.com` |
 | Amazon SES | `ses` | `email-smtp.<region>.amazonaws.com:587` | SES SMTP username | SES SMTP password | `amazonses.com` |
 | Postmark | `postmark` | `smtp.postmarkapp.com:587` | Server API token | Server API token | `spf.mtasv.net` |

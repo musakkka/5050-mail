@@ -66,13 +66,45 @@ These are off by default; switch on **More record types** when you add or edit a
 
 ## With Cloudflare: one click
 
-If the domain's DNS is on Cloudflare, give 5050 Mail an API token and it creates the records itself, gets certificates through DNS validation, and keeps MX, SPF, DKIM and DMARC published.
-
-1. In Cloudflare, go to **My Profile → API Tokens → Create Token**.
-2. Use the **Edit zone DNS** template, or create a custom token with **Zone: Read** and **DNS: Edit** for the zones you want to manage.
-3. Pass it to the installer with `--cloudflare-token`, or set `CLOUDFLARE_API_TOKEN` in `/opt/5050-mail/.env` and re-run the installer. If your mail domain is not the zone itself (for example `mail.corp.example.com` in the zone `example.com`), also set `CLOUDFLARE_ZONE`.
+If the domain's DNS is on Cloudflare, give 5050 Mail an API token and it creates the records itself, gets certificates through DNS validation, and keeps MX, SPF, DKIM and DMARC published. The installer asks "Is the DNS for your domain on Cloudflare?" and walks you through the token. To use a token later, set `CLOUDFLARE_API_TOKEN` in `/opt/5050-mail/.env` (and `CLOUDFLARE_ZONE` if your mail domain is not the zone itself, for example `mail.corp.example.com` in the zone `example.com`) and re-run the installer.
 
 In the admin console, **Add a domain** then offers the Cloudflare zones the token can see: one click publishes DNS, sets up DKIM signing and requests the certificate. For a domain added by hand, **Publish records** on its page does the same. The token never reaches the browser.
+
+### Cloudflare token
+
+Create the token at [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens): **Create Token**, then **Create Custom Token**. Give it these permissions:
+
+| Scope | Permission | Access | Needed for |
+|---|---|---|---|
+| Zone | DNS | Edit | Creating records and DNS validation for certificates. Required. |
+| Zone | Zone | Read | Finding your zone. Required. |
+| Account | Email Sending | Edit | Sending through Cloudflare when your host blocks port 25. Optional otherwise. |
+
+Under **Zone Resources** choose **Include > Specific zone** and pick your domain. That keeps the token to one zone. Under **Account Resources** (only if you add Email Sending) choose your account. Then **Continue to summary** and **Create Token**, and copy the secret. Cloudflare shows it once.
+
+This link opens the form with DNS Edit and Zone Read filled in. It only pre-fills the form; you still review and create the token, and add Email Sending by hand:
+
+```text
+https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%5D&accountId=*&zoneId=all&name=5050%20Mail
+```
+
+User tokens and account-owned tokens both work. The installer verifies a user token at `/user/tokens/verify` and an account-owned one at `/accounts/{id}/tokens/verify`.
+
+**What the installer checks.** It confirms the token is active, lists the zones it can see and picks the one that holds your domain. It tests `Zone > DNS > Edit` by creating and deleting one TXT record named `_5050-token-check`, and tests Email Sending by listing the zone's sending domains. If a permission is missing it names it, for example `Zone > DNS > Edit`, and waits while you fix the token. Edits to a token apply at once, so pressing Enter re-checks without a new token. If the dashboard also lists an Email Sending entry under **Zone** and the installer still reports it missing, add that one too.
+
+**Where the token lives.** In `/opt/5050-mail/.env` on your server, mode 0600, and nowhere else. It is sent only to Cloudflare. To revoke it, delete it on the API tokens page; the installer's DNS and certificate renewal then stop working until you give it a new one.
+
+**What it does to your zone.** Records are created as **DNS only** (never proxied). It never adds a second SPF or DMARC record:
+
+| Record | If one already exists |
+|---|---|
+| SPF (`v=spf1`) | This server is added to it (`a:mail.example.com`, before the final `all`), and the installer shows the old and new value. More than one SPF record is left alone with a warning. |
+| DMARC | Kept as it is. |
+| MX | The installer lists the existing MX records and asks before replacing any that would compete (same or lower priority number). With `--replace-mx` it replaces them without asking. If you say no, mail keeps going to the old servers. |
+| `A` for mail, send, api | Left alone if it points elsewhere, with a warning. |
+| DKIM, TLS reporting | Left alone if a record with the same name already holds a value. |
+
+Everything it changed is listed in the summary at the end ("DNS changed").
 
 > [!NOTE]
 > Cloudflare's orange-cloud proxy only carries web traffic. Keep `mail.example.com` **DNS only** (grey cloud), or mail apps and other mail servers can't reach it.

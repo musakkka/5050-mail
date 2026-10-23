@@ -25,17 +25,18 @@ Re-running keeps every existing value and generated secret, and reconciles the s
 | `--send-host HOST` | 5050 Send dashboard (default `send.DOMAIN`) |
 | `--api-host HOST` | 5050 Send API (default `api.DOMAIN`) |
 | `--tls acme\|internal` | `acme`: Let's Encrypt (default). `internal`: self-signed, for test domains |
-| `--cloudflare-token TOKEN` | Create DNS records and get certificates through Cloudflare |
+| `--cloudflare-token TOKEN` | Create DNS records and get certificates through Cloudflare. The installer checks the token first and stops, naming the missing permission, if it can't edit DNS. See [Cloudflare token](/docs/dns/#cloudflare-token) |
+| `--replace-mx` | With a Cloudflare token: replace existing MX records that would compete with this server, without asking. Without it they are kept |
 | `--relay-host HOST` `--relay-port PORT` `--relay-user USER` `--relay-password PASS` | Outbound smarthost, for when port 25 is blocked |
 | `--send-transport smtp\|log` | 5050 Send delivery: `smtp` through the mail server (default), or `log` to drop mail (testing) |
 | `--dir DIR` | Install directory (default `/opt/5050-mail`) |
 | `--source DIR` | Install from a local checkout instead of GitHub |
-| `--yes` | Never prompt |
+| `--yes` | Never prompt, and skip the one confirmation at the start |
 | `--skip-port25-check` | Don't probe outbound port 25 |
 | `--upgrade` | Update the source, rebuild and restart |
 | `--uninstall [--purge]` | Stop and remove the containers; `--purge` also deletes all mail and data |
 
-Environment equivalents: `MAIL_DOMAIN`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `TLS_MODE`, `CLOUDFLARE_API_TOKEN`, `RELAY_HOST`, `RELAY_PORT`, `RELAY_USERNAME`, `RELAY_PASSWORD`, `SEND_TRANSPORT`, `FIVEFIFTY_DIR`, `FIVEFIFTY_SRC` and `ASSUME_YES=1`.
+Environment equivalents: `MAIL_DOMAIN`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `TLS_MODE`, `CLOUDFLARE_API_TOKEN`, `RELAY_HOST`, `RELAY_PORT`, `RELAY_USERNAME`, `RELAY_PASSWORD`, `SEND_TRANSPORT`, `FIVEFIFTY_DIR`, `FIVEFIFTY_SRC`, `ASSUME_YES=1` and `REPLACE_MX=1`. Set `NO_COLOR=1` for plain output. The installer also writes its full log to `/opt/5050-mail/install.log`.
 
 ## Domains and hostnames
 
@@ -84,10 +85,10 @@ By default the mail server delivers directly to each recipient's `MX` on port 25
 
 | Key | Meaning |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | Token with Zone: Read and DNS: Edit. The installer creates the DNS records, the mail server gets certificates with DNS-01 and keeps MX, SPF, DKIM and DMARC published, and the admin console offers one-click setup for new domains. |
+| `CLOUDFLARE_API_TOKEN` | Token with Zone > Zone > Read and Zone > DNS > Edit (add Account > Email Sending > Edit to send through Cloudflare). The installer creates the DNS records, the mail server gets certificates with DNS-01 and keeps MX, SPF, DKIM and DMARC published, and the admin console offers one-click setup for new domains. |
 | `CLOUDFLARE_ACCOUNT_ID` | Limits zone lookups to one account |
 | `CLOUDFLARE_ZONE` | Only if the zone is not `MAIL_DOMAIN` itself |
-| `CLOUDFLARE_EMAIL_SENDING` | `1` only when `RELAY_HOST` is Cloudflare Email Service |
+| `CLOUDFLARE_EMAIL_SENDING` | `1` only when `RELAY_HOST` is Cloudflare Email Sending |
 
 ## 5050 Send
 
