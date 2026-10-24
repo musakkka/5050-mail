@@ -1,0 +1,30 @@
+# Deploys this repo's services to the Azure stack on every push.
+# Runs on the self-hosted runner on burst-1; which services deploy (and from
+# which branch) is decided by services.yml in the infra repo, same rules as
+# Railway had: branch per environment, watch paths for monorepos.
+name: deploy
+on:
+  push:
+    # A change to the workflow file itself is not an app change: don't redeploy
+    # on it. App-code pushes still deploy (watch-path rules in ci-deploy apply).
+    paths-ignore:
+      - '.github/workflows/**'
+  workflow_dispatch:
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: [self-hosted, pmk-deploy]
+    timeout-minutes: 60
+    steps:
+      - name: Deploy to Azure
+        # Values from the event (branch name, etc.) are passed through env and
+        # quoted in the shell, never interpolated into the run line: a branch
+        # named `$(cmd)` is a valid ref and would otherwise execute here.
+        env:
+          REPO: ${{ github.repository }}
+          REF: ${{ github.ref_name }}
+          BEFORE: ${{ github.event.before || '' }}
+          SHA: ${{ github.sha }}
+        run: /srv/infra/bin/ci-deploy "$REPO" "$REF" "$BEFORE" "$SHA"
